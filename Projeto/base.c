@@ -1,5 +1,3 @@
-/*[sumario]*/
-
 //bibliotecas
 #include<stdlib.h> // 1 Permite usar o  system("cls"); (limpar o ecrã)   fflush(stdin);  (para limpar o buffer do teclado)
 #include<stdio.h>  // 2 Biblioteca standart de input e output
@@ -17,7 +15,6 @@
 #define TAMANHO_STRING 100
 #define MAXIMO_ALUNOS 30
 #define FILE_PATH_ALUNOS "SecFiles/InfoAlunos.txt"
-
 
 //strucks
 typedef struct 
@@ -37,13 +34,12 @@ typedef struct
     t_data data_lancamento;
 } t_aluno;
 
-//funções
+//prototipos de funções
 int ler_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos);
 int mostrar_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos);
 char ler_numero_inteiro(char[],int, int);
 void gravar_ficheiro_binario(t_aluno vetor_estudantes[],int numero_alunos);
 int ler_ficheiro_binario(t_aluno vetor_estudantes[]);
-
 int menu_opcoes(void);
 int confirmar_saida(void);
 
