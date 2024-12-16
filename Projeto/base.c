@@ -14,9 +14,9 @@
 //constantes
 #define TAMANHO_STRING 100
 #define MAXIMO_ALUNOS 30
-#define FILE_PATH_ALUNOS "SecFiles/InfoAlunos.txt"
+#define FILE_PATH_ALUNOS "SecFiles/InfoAlunos.dat"
 
-//strucks
+//structs
 typedef struct 
 {
     int dia;
@@ -40,6 +40,7 @@ int mostrar_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos);
 char ler_numero_inteiro(char[],int, int);
 void gravar_ficheiro_binario(t_aluno vetor_estudantes[],int numero_alunos);
 int ler_ficheiro_binario(t_aluno vetor_estudantes[]);
+int ler_regime_estudante(int regime);
 int menu_opcoes(void);
 int confirmar_saida(void);
 
@@ -140,7 +141,7 @@ int ler_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos) {
     scanf("%d",&vetor_estudantes[numero_alunos].numero);
     printf("\nInsira o nome do estudante: "); //nome do aluno
     scanf(" %s",&vetor_estudantes[numero_alunos].nome);
-
+    regime = ler_regime_estudante(regime);
     if (regime == 1) {
         strcpy(vetor_estudantes[numero_alunos].regime,"Diurno");
     } else {
@@ -154,7 +155,7 @@ int ler_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos) {
 }
 
 //ler regime estudante
-int ler_registe_estudante() {
+int ler_regime_estudante(int regime) {
     do{
         printf("\n(1) - Diurno\n(2) - Pos Laboral\nInsira o regime do estudante: "); //regime do aluno
         scanf("%d",&regime);
@@ -163,6 +164,7 @@ int ler_registe_estudante() {
             printf("O valor inserido não se encontra de entre as opcoes apresentadas!!!\nPorfavor insira");
         }
     } while (regime != 1 && regime != 2);
+    return regime;
 }
     
 
