@@ -201,6 +201,7 @@ void gravar_ficheiro_binario(t_aluno vetor_estudantes[], int numero_alunos) {
     fclose(file_alunos);
 }
 
+
 //ler do fitchero binario
 int ler_ficheiro_binario(t_aluno vetor_estudantes[]) {
     int numero_estudantes = 0;
