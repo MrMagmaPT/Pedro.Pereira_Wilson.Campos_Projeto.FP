@@ -69,7 +69,7 @@ int main() {
             break;
         case 5:
             system("cls");
-            gravar_ficheiro_binario(vetor_alunos, numero_alunos); //Escreve alunos no ficheiro
+            gravar_ficheiro_binario(vetor_alunos, numero_alunos); // Escreve alunos no ficheiro
             break;
         case 6:
             system("cls");
@@ -81,7 +81,7 @@ int main() {
             break;
         default:
             system("cls");
-            printf("Erro, Opção Não Permitida!");
+            printf("Erro, Opcao Nao Permitida!");
             break;
         }
     } while (sair != 1);
@@ -100,7 +100,7 @@ char ler_numero_inteiro(char texto[],int min, int max){
         fflush(stdin);
         if (num < min || num > max){
             system("cls"); 
-            printf("O valor introduzido não segue as regras indicadas\n(prima qualquer tecla para continuar)\n");
+            printf("O valor introduzido nao segue as regras indicadas\n(prima qualquer tecla para continuar)\n");
             getch();
         }
     } while (num < 1 || num > 100);
@@ -140,40 +140,49 @@ int ler_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos) {
     scanf("%d",&vetor_estudantes[numero_alunos].numero);
     printf("\nInsira o nome do estudante: "); //nome do aluno
     scanf(" %s",&vetor_estudantes[numero_alunos].nome);
-    do{
-        printf("\n(1) - Diurno\n(2) - Pós Laboral\nInsira o regime do estudante: "); //regime do aluno
-        scanf("%d",&regime);
-        fflush(stdin);
-        if  (regime != 1 && regime != 2) {
-            printf("O valor inserido não se encontra de entre as opções apresentadas!!!\nPorfavor insira");
-        }
-    } while (regime != 1 && regime != 2);
 
     if (regime == 1) {
         strcpy(vetor_estudantes[numero_alunos].regime,"Diurno");
     } else {
-        strcpy(vetor_estudantes[numero_alunos].regime,"Pós Laboral");
+        strcpy(vetor_estudantes[numero_alunos].regime,"Pos Laboral");
     }
     vetor_estudantes[numero_alunos].nota_final = ler_numero_inteiro("Insira a nota final (min 0 max 20) do estudante", 0, 20);
     vetor_estudantes[numero_alunos].data_lancamento.dia = t.wDay;
     vetor_estudantes[numero_alunos].data_lancamento.mes = t.wMonth;
     vetor_estudantes[numero_alunos].data_lancamento.ano = t.wYear;
-    mostrar_dados_estudante(vetor_estudantes, contador); //debugging
     return contador;
 }
+
+//ler regime estudante
+int ler_registe_estudante() {
+    do{
+        printf("\n(1) - Diurno\n(2) - Pos Laboral\nInsira o regime do estudante: "); //regime do aluno
+        scanf("%d",&regime);
+        fflush(stdin);
+        if  (regime != 1 && regime != 2) {
+            printf("O valor inserido não se encontra de entre as opcoes apresentadas!!!\nPorfavor insira");
+        }
+    } while (regime != 1 && regime != 2);
+}
+    
 
 //mostrar o vetor
 int mostrar_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos){
     int indice;
-    for (indice = 0; indice < numero_alunos; indice++)
-    {
-        printf("\nId do Estudante: %d\n", vetor_estudantes[indice].id);
-        printf("Nome do Estudante: %s\n", vetor_estudantes[indice].nome);
-        printf("Numero do aluno: %d\n", vetor_estudantes[indice].numero);
-        printf("Regime do curso: %s\n", vetor_estudantes[indice].regime);
-        printf("Nota final do aluno: %d\n", vetor_estudantes[indice].nota_final);
-        printf("Dia de lancamento: %d/%d/%d\n", vetor_estudantes[indice].data_lancamento.dia, vetor_estudantes[indice].data_lancamento.mes, vetor_estudantes[indice].data_lancamento.ano);
-    } 
+    if (vetor_estudantes[0].id == 0) {
+        printf("Nao existem dados a apresentar, carregue os dados do ficheiro ou insira dados novos!!!\nPrima qualquer tecla para continuar...");
+        getch();
+        system("cls");
+    }else {
+        for (indice = 0; indice < numero_alunos; indice++){
+            printf("\nId do Estudante: %d\n", vetor_estudantes[indice].id);
+            printf("Nome do Estudante: %s\n", vetor_estudantes[indice].nome);
+            printf("Numero do aluno: %d\n", vetor_estudantes[indice].numero);
+            printf("Regime do curso: %s\n", vetor_estudantes[indice].regime);
+            printf("Nota final do aluno: %d\n", vetor_estudantes[indice].nota_final);
+            printf("Dia de lancamento: %d/%d/%d\n", vetor_estudantes[indice].data_lancamento.dia, vetor_estudantes[indice].data_lancamento.mes, vetor_estudantes[indice].data_lancamento.ano);
+        } 
+    }
 }
 
 //inserir no fichero binario
@@ -203,7 +212,7 @@ int ler_ficheiro_binario(t_aluno vetor_estudantes[]) {
         printf("Dados carregados com sucesso!!!");
     }
     fclose(file_alunos);
-    //faz eturn do numero de estudantes lido
+    //faz return do numero de estudantes lido
     return numero_estudantes;
 }
 
@@ -223,7 +232,7 @@ int confirmar_saida() {
             getch();
             return 1;
         } else {
-            printf("Esta opção nao foi apresentada, por favor responda com \"[S]\" ou \"[N]\"\n");
+            printf("Esta opcao nao foi apresentada, por favor responda com \"[S]\" ou \"[N]\"\n");
         }
     } while (opcao != 'N' && opcao != 'n' && opcao != 'S' && opcao != 's' );
 }
