@@ -71,11 +71,9 @@ typedef struct
 
 
 
-
 //por remover 
 //    |
 //   \/
-
 typedef struct 
 {
     int id;
@@ -85,6 +83,10 @@ typedef struct
     int nota_final;
     t_data data_lancamento;
 } t_aluno;
+//     /\
+//     |
+// por remover
+
 
 //prototipos de funções
 int ler_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos);
