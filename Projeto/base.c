@@ -41,7 +41,7 @@ int ler_numero_inteiro(char[],int, int);
 void gravar_ficheiro_binario(t_aluno vetor_estudantes[],int numero_alunos);
 int procurar_estudante(t_aluno vetor_estudantes[], int numero_alunos ,int numero_estudante_procurar);
 void alterar_nota_final_estudante(t_aluno vetor_estudantes[], int numero_alunos);
-int mostrar_estatisticas(t_aluno vetor_estudantes[], int numero_alunos));
+int mostrar_estatisticas(t_aluno vetor_estudantes[], int numero_alunos);
 int ler_ficheiro_binario(t_aluno vetor_estudantes[]);
 void ler_regime_estudante(char []);
 int menu_opcoes(void);
