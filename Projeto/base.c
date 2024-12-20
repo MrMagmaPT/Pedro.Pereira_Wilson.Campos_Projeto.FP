@@ -1,15 +1,15 @@
 //bibliotecas
-#include<stdlib.h> // 1 Permite usar o  system("cls"); (limpar o ecrã)   fflush(stdin);  (para limpar o buffer do teclado)
-#include<stdio.h>  // 2 Biblioteca standart de input e output
-#include<unistd.h> // 3 sleep (1) (para o programa pelo tempo determinado pode ou não vir a ser utilizado se for vai estar aqui se não for vou retirar);
-#include<conio.h>  // 4 Coloquei este aqui por causa do getch() (é um função par aobter caracter mas que tambem pode ser usado como um stopper a espera de a inserção de qualquer simbolo ou caracter do teclado, utilizado correntemente assguir a mensagem "prima qualquer tecla para continuar") 
-#include<locale.h> // 5 Para poder por uma lingua de um local permitindo a utilização de certos tipos de carcteres como por exemplo "�"
-#include<ctype.h>  // 6 Permite fazer certos simbolos corretamente
-#include<math.h>   // 7 Para calcular expoentes com a função pow(b,e) e mais algumas funções matematicas
-#include<time.h>   // 8 Para usar o srand(time(NULL)); 
-#include<windows.h>// 9 Para poder utilizar o system("color 0a"); trocar 0a para a cor desejada utiliza o formato do CMD cor do texto � o segundo digito("a") cor do background � o primeiro("0")
-#include<string.h> // 10 Manipulação de strings
-#include<stdbool.h>// 11 Para poder usar files boolean (true/false)
+#include<stdlib.h>  // 1 Permite usar o  system("cls"); (limpar o ecrã)   fflush(stdin);  (para limpar o buffer do teclado)
+#include<stdio.h>   // 2 Biblioteca standart de input e output
+#include<unistd.h>  // 3 sleep (1) (para o programa pelo tempo determinado pode ou não vir a ser utilizado se for vai estar aqui se não for vou retirar);
+#include<conio.h>   // 4 Coloquei este aqui por causa do getch() (é um função par aobter caracter mas que tambem pode ser usado como um stopper a espera de a inserção de qualquer simbolo ou caracter do teclado, utilizado correntemente assguir a mensagem "prima qualquer tecla para continuar") 
+#include<locale.h>  // 5 Para poder por uma lingua de um local permitindo a utilização de certos tipos de carcteres como por exemplo "�"
+#include<ctype.h>   // 6 Permite fazer certos simbolos corretamente
+#include<math.h>    // 7 Para calcular expoentes com a função pow(b,e) e mais algumas funções matematicas
+#include<time.h>    // 8 Para usar o srand(time(NULL)); 
+#include<windows.h> // 9 Para poder utilizar o system("color 0a"); trocar 0a para a cor desejada utiliza o formato do CMD cor do texto � o segundo digito("a") cor do background � o primeiro("0")
+#include<string.h>  // 10 Manipulação de strings
+#include<stdbool.h> // 11 Para poder usar files boolean (true/false)
 
 //constantes
 #define TAMANHO_STRING 100
@@ -41,7 +41,7 @@ int ler_numero_inteiro(char[],int, int);
 void gravar_ficheiro_binario(t_aluno vetor_estudantes[],int numero_alunos);
 int procurar_estudante(t_aluno vetor_estudantes[], int numero_alunos ,int numero_estudante_procurar);
 void alterar_nota_final_estudante(t_aluno vetor_estudantes[], int numero_alunos);
-int mostrar_estatisticas(t_aluno vetor_estudantes[], int numero_alunos);
+void mostrar_estatisticas(t_aluno vetor_estudantes[], int numero_alunos);
 int ler_ficheiro_binario(t_aluno vetor_estudantes[]);
 void ler_regime_estudante(char []);
 int menu_opcoes(void);
@@ -69,7 +69,7 @@ int main() {
             break;
         case 4:
             system("cls");
-
+            mostrar_estatisticas(vetor_alunos,numero_alunos);
             break;
         case 5:
             system("cls");
@@ -90,7 +90,6 @@ int main() {
         }
     } while (sair != 1);
 }
-
 //le numero inteiro
 int ler_numero_inteiro(char texto[],int min, int max){
     int num = 0;
@@ -110,7 +109,6 @@ int ler_numero_inteiro(char texto[],int min, int max){
     } while (num < min || num > max);
     return num;
 }
-
 //menu
 int menu_opcoes(void){
     int opcao;
@@ -133,7 +131,6 @@ int menu_opcoes(void){
     } while (opcao != 1 && opcao != 2 && opcao != 3 && opcao != 4 && opcao != 5 && opcao != 6 && opcao != 0);
     return opcao;
 }
-
 //ler dados estudantes
 int ler_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos) {
     int regime = 0, contador = numero_alunos + 1, numero_aluno_procurar = 0, flag_estudante_procurado = 0;
@@ -150,9 +147,13 @@ int ler_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos) {
             printf("\nO aluno com o numero indicado ja se encontra registado escolha outro numero\n"); //mensagem de erro
         }
     } while (flag_estudante_procurado != -1);
+
     printf("\nInsira o nome do estudante: "); //nome do aluno
-    getchar();
     fgets(vetor_estudantes[numero_alunos].nome, TAMANHO_STRING, stdin);
+    vetor_estudantes[numero_alunos].nome[strcspn(vetor_estudantes[numero_alunos].nome, "\n")] = '\0'; //Usamos o strcspn para tirar o Enter após colocar o nome
+
+
+
     ler_regime_estudante(vetor_estudantes[numero_alunos].regime); //regime do estudante
     vetor_estudantes[numero_alunos].nota_final = ler_numero_inteiro("Insira a nota final (min 0 max 20) do estudante", 0, 20); //ler nota final
     vetor_estudantes[numero_alunos].data_lancamento.dia = t.wDay; //data - dia
@@ -213,7 +214,6 @@ void gravar_ficheiro_binario(t_aluno vetor_estudantes[], int numero_alunos) {
     fclose(file_alunos);
 }
 
-
 //ler do fitchero binario
 int ler_ficheiro_binario(t_aluno vetor_estudantes[]) {
     int numero_estudantes = 0;
@@ -242,15 +242,41 @@ int procurar_estudante(t_aluno vetor_estudantes[], int numero_alunos,int numero_
     return indice_aluno;
 }
 
+//alterar a nota final do estudante
 void alterar_nota_final_estudante(t_aluno vetor_estudantes[], int numero_alunos) {
     int numero_aluno_procurar = 0, flag_estudante_procurado = 0;
+    
     numero_aluno_procurar = ler_numero_inteiro("\nInsira o numero do estudante (deve estar compreendido entre 2230001 e 2249999)",2230001,2249999); //pede e devolve o numero de aluno
     flag_estudante_procurado = procurar_estudante(vetor_estudantes,numero_alunos, numero_aluno_procurar); //manda para a função
+
     if (flag_estudante_procurado != -1) {
+        printf("A nota atual do aluno é: %d\n",vetor_estudantes[flag_estudante_procurado].nota_final);
         vetor_estudantes[flag_estudante_procurado].nota_final = ler_numero_inteiro("\nInsira a nova final (min 0 max 20) do estudante", 0, 20);
     }else{
         printf("\nO aluno nao foi encontrado");     
     }
+}
+
+// Estatísticas das avaliações - Wilson
+void mostrar_estatisticas(t_aluno vetor_estudantes[], int numero_alunos) {
+    int indice = 0, indice_aluno = -1, nota_mais_alta = 0, nota_mais_baixa = 20, soma = 0;
+    float media = 0;
+    char estudante_melhor_nota[TAMANHO_STRING], estudante_pior_nota[TAMANHO_STRING];
+    for (indice = 0; indice < numero_alunos; indice++){
+        if (vetor_estudantes[indice].nota_final > nota_mais_alta) {
+            nota_mais_alta = vetor_estudantes[indice].nota_final;
+            strcpy(estudante_melhor_nota,vetor_estudantes[indice].nome);
+        }
+        if (vetor_estudantes[indice].nota_final < nota_mais_baixa) {
+            nota_mais_baixa = vetor_estudantes[indice].nota_final;
+            strcpy(estudante_pior_nota,vetor_estudantes[indice].nome);
+        }
+        soma = soma + vetor_estudantes[indice].nota_final;
+    }
+    media = soma/indice;
+    printf("A nota mais alta foi: %d - Que foi do aluno: %s\n", nota_mais_alta, estudante_melhor_nota);
+    printf("A nota mais baixa foi: %d - Que foi do aluno: %s\n",nota_mais_baixa, estudante_pior_nota);
+    printf("A media de todas as notas foi: %.2f\n",media);
 }
 
 //confirmar saida
