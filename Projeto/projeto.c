@@ -93,8 +93,6 @@ typedef struct
 //  antigos 
 //    |
 //   \/
-
-
 void mostrar_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos);
 void gravar_ficheiro_binario(t_aluno vetor_estudantes[],int numero_alunos);
 
@@ -125,13 +123,14 @@ int ler_dados_ficha(t_ficha vetor_fichas[],int numero_fichas);
 int ler_dados_exercicios(t_exercicio vetor_exercicios[],int numero_exercicios, t_ficha vetor_fichas[],int numero_fichas);
 
 //funções genéricas
-void ler_entre_X_opcoes(char vetor[],char mensagem[],int quant_opcoes);
+void ler_entre_2_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[]);
+void ler_entre_3_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[],char opcao3[]);
 int ler_numero_inteiro(char[],int, int);
 int confirmar_Sim_ou_Nao(char[], char[], char[]);
 
 //função main
 int main() {
-    t_aluno vetor_alunos[MAXIMO_ALUNOS] = {0};
+    t_estudante vetor_alunos[MAXIMO_ALUNOS] = {0};
     int sair = 0, escolha = 0, numero_alunos = 0;
     do {
         escolha = menu_opcoes();
@@ -338,27 +337,8 @@ int main() {
 //   menus
 //    |
 //   \/
-//le numero inteiro
-int ler_numero_inteiro(char texto[],int min, int max){
-    int num = 0;
-    int tamanho_texto = strlen(texto);
-    do{
-        for (int i = 0; i < tamanho_texto; i++){
-            printf("%c",texto[i]);
-        }
-        printf(": ");
-        scanf("%d",&num);
-        fflush(stdin);
-        if (num < min || num > max){
-            system("cls"); 
-            printf("O valor introduzido nao segue as regras indicadas\n(prima qualquer tecla para continuar)\n");
-            getch();
-        }
-    } while (num < min || num > max);
-    return num;
-}
 
-//menu
+//menu de menus
 int menu_opcoes(void){
     int opcao;
     do{
@@ -371,6 +351,7 @@ int menu_opcoes(void){
         printf("* (5) Menu Estatisticas         *\n");
         printf("* (6) Gravar dados em Ficheiro! *\n");
         printf("* (7) Ler dados de um Ficheiro! *\n");
+        printf("* (0) Sair                      *\n");
         printf("* (0) Sair                      *\n");
         printf("********* Menu de Opcoes ********\n");
         printf("OPCAO:");
@@ -484,30 +465,40 @@ int menu_opcoes_estatisticas(void){
     return opcao;
 }
 
-// confirmar saida
-//    |
-//   \/
+//  processamento de dados
+//         |
+//        \/
+
+//le numero inteiro
+int ler_numero_inteiro(char texto[],int min, int max){
+    int num = 0;
+    do{
+        printf("%s: ",texto);
+        scanf("%d",&num);
+        fflush(stdin);
+        if (num < min || num > max){
+            system("cls"); 
+            printf("O valor introduzido nao segue as regras indicadas\n(prima qualquer tecla para continuar)\n");
+            getch();
+        }
+    } while (num < min || num > max);
+    return num;
+}
 
 //confirmar saida
 int confirmar_Sim_ou_Nao(char texto[], char texto_cancelado[], char texto_confirmado[]) {
     char opcao;
-    int sair, tamanho_texto = strlen(texto),tamanho_texto_cancelado = strlen(texto_cancelado),tamanho_texto_confirmado = strlen(texto_confirmado);;
+    int sair;
     do{
-        for (int i = 0; i < tamanho_texto; i++){
-            printf("%c",texto[i]);
-        }
+        printf("%s",texto);
         fflush(stdin);
         scanf(" %c", &opcao);
         if (opcao == 'N' || opcao == 'n')
         {
-            for (int i = 0; i < tamanho_texto_cancelado; i++){
-                printf("%c",texto_cancelado[i]);
-            }
+            printf("%s",texto_cancelado);
             sair = 0;
         } else if (opcao == 'S' || opcao == 's') {
-            for (int i = 0; i < tamanho_texto_confirmado; i++){
-                printf("%c",texto_confirmado[i]);
-            }
+            printf("%s",texto_confirmado);
             getch();
             sair = 1;
         } else {
@@ -569,8 +560,8 @@ typedef struct
     int id; DONE
     int id_ficha; DONE
     char nome[TAMANHO_STRING]; DONE
-    char dificuldade[TAMANHO_STRING];
-    char tipo_solucao[TAMANHO_STRING];
+    char dificuldade[TAMANHO_STRING]; DONE
+    char tipo_solucao[TAMANHO_STRING]; DONE
 } t_exercicio;
 */
 
@@ -591,31 +582,53 @@ int ler_dados_exercicios(t_exercicio vetor_exercicios[],int numero_exercicios, t
         }
     } while (flag_ficha_procurado != -1);
     printf("\nInsira o nome do exercicio: "); //nome do exercicio
-    ler_entre_X_opcoes(vetor_exercicios[numero_exercicios].dificuldade); //regime do estudante
     fgets(vetor_exercicios[numero_exercicios].nome, TAMANHO_STRING, stdin);
-    vetor_fichas[numero_fichas].nome[strcspn(vetor_fichas[numero_fichas].nome, "\n")] = '\0'; //Usamos o strcspn para tirar o Enter após colocar o nome
+    vetor_exercicios[numero_exercicios].nome[strcspn(vetor_exercicios[numero_exercicios].nome, "\n")] = '\0'; //Usamos o strcspn para tirar o Enter após colocar o nome
+    ler_entre_2_opcoes(vetor_exercicios[numero_exercicios].tipo_solucao,"Insira o tipo de solução do exercicio: ","Algoritmo","Código");
+    ler_entre_3_opcoes(vetor_exercicios[numero_exercicios].dificuldade,"Insira a dificuldade do exercicio: ","Alevada","Média","Baixa");
     return contador;
 }
 
-//ler regime estudante
-void ler_entre_2_opcoes(char vetor[],char mensagem[],int quant_opcoes) {
-    int opcao;
+//ler ler entre 2 opcoes dadas pelo programador e atibuir ao vetor enviado
+void ler_entre_2_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[]) {
+    int opcao = 0;
     do{
-        printf("\n(1) - Diurno\n(2) - Pos Laboral\nInsira o regime do estudante: "); //regime do aluno
+        printf("\n(1) - %s\n(2) - %s\n%s",opcao1,opcao2,mensagem);
+        printf("\n");
         scanf("%d",&opcao);
         fflush(stdin);
         if  (opcao != 1 && opcao != 2) {
-            printf("O valor inserido não se encontra de entre as opcoes apresentadas!!!\nPorfavor insira");
-        } else {
+            printf("O valor inserido não se encontra de entre as opcoes apresentadas!!!\nPorfavor Insira");
+        } else { 
             if (opcao == 1) {
-                strcpy(regime,"Diurno");
+                strcpy(vetor,opcao1);
             } else {
-                strcpy(regime,"Pos Laboral");
+                strcpy(vetor,opcao2);
             }
         }
     } while (opcao != 1 && opcao != 2);
 }
 
+//ler ler entre 3 opcoes dadas pelo programador e atibuir ao vetor enviado
+void ler_entre_3_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[], char opcao3[]) {
+    int opcao = 0;
+    do{
+        printf("\n(1) - %s\n(2) - %s\n(3) - %s\n%s\n",opcao1,opcao2,opcao3,mensagem);
+        scanf("%d",&opcao);
+        fflush(stdin);
+        if  (opcao != 1 && opcao != 2 && opcao != 3) {
+            printf("O valor inserido não se encontra de entre as opcoes apresentadas!!!\nPorfavor Insira");
+        } else { 
+            if (opcao == 1) {
+                strcpy(vetor,opcao1);
+            } else if (opcao == 2){
+                strcpy(vetor,opcao2);
+            } else {
+                strcpy(vetor,opcao3);
+            }
+        }
+    } while (opcao != 1 && opcao != 2 && opcao != 3);
+}
 
 //procura estudante
 int procurar_estudante(t_aluno vetor_estudantes[], int numero_alunos,int numero_estudante_procurar) {
@@ -632,12 +645,19 @@ int procurar_estudante(t_aluno vetor_estudantes[], int numero_alunos,int numero_
 int procurar_ficha(t_ficha vetor_fichas[], int numero_fichas,int numero_fichas_procurar) {
     int indice = 0, indice_ficha = -1;
     for (indice = 0; indice < numero_fichas; indice++){
-        if (vetor_fichas[indice].nome == strcat("Ficha ",numero_fichas_procurar)) {
+        if (vetor_fichas[indice].nome == strcat("Ficha ", numero_fichas_procurar)) {
             indice_ficha = indice;
         }
     }
     return indice_ficha;
 }
+
+
+
+
+
+
+
 
 
 
@@ -651,7 +671,7 @@ int procurar_ficha(t_ficha vetor_fichas[], int numero_fichas,int numero_fichas_p
 
 
 
-
+/*
 //mostrar o vetor
 void mostrar_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos){
     int indice;
@@ -702,8 +722,6 @@ int ler_ficheiro_binario(t_aluno vetor_estudantes[]) {
     return numero_estudantes;
 }
 
-
-
 //alterar a nota final do estudante
 void alterar_nota_final_estudante(t_aluno vetor_estudantes[], int numero_alunos) {
     int numero_aluno_procurar = 0, flag_estudante_procurado = 0;
@@ -739,4 +757,4 @@ void mostrar_estatisticas(t_aluno vetor_estudantes[], int numero_alunos) {
     printf("A nota mais alta foi: %d - Que foi do aluno: %s\n", nota_mais_alta, estudante_melhor_nota);
     printf("A nota mais baixa foi: %d - Que foi do aluno: %s\n",nota_mais_baixa, estudante_pior_nota);
     printf("A media de todas as notas foi: %.2f\n",media);
-}
+}*/

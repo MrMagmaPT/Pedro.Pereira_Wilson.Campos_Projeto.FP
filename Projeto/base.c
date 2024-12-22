@@ -95,10 +95,12 @@ int ler_numero_inteiro(char texto[],int min, int max){
     int num = 0;
     int tamanho_texto = strlen(texto);
     do{
+        printf("%s: ",texto);
+        /*
         for (int i = 0; i < tamanho_texto; i++){
             printf("%c",texto[i]);
-        }
-        printf(": ");
+        }*/
+        //printf(": ");
         scanf("%d",&num);
         fflush(stdin);
         if (num < min || num > max){
@@ -138,7 +140,7 @@ int ler_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos) {
     GetLocalTime(&t); //recebe o tempo local do sistema
     vetor_estudantes[numero_alunos].id = contador; //id
     do {
-        numero_aluno_procurar = ler_numero_inteiro("\nInsira o numero do estudante (deve estar compreendido entre e 2249999)",2230001,2249999); //pede e devolve o numero de aluno
+        numero_aluno_procurar = ler_numero_inteiro("\nInsira o numero do estudante (deve estar compreendido entre 2230001 e 2249999)",2230001,2249999); //pede e devolve o numero de aluno
         flag_estudante_procurado = procurar_estudante(vetor_estudantes,numero_alunos, numero_aluno_procurar); //manda para a função
         if (flag_estudante_procurado == -1) {
             vetor_estudantes[numero_alunos].numero = numero_aluno_procurar; //guarda o valor inserido no array se não existir
