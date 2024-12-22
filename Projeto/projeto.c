@@ -89,14 +89,22 @@ typedef struct
 
 
 //prototipos de funções
-int ler_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos);
+
+//  antigos 
+//    |
+//   \/
+int ler_dados_estudante(t_estudante vetor_estudantes[],int numero_alunos);
+int ler_dados_ficha(t_ficha vetor_fichas[],int numero_fichas);
+
 void mostrar_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos);
 void gravar_ficheiro_binario(t_aluno vetor_estudantes[],int numero_alunos);
-int procurar_estudante(t_aluno vetor_estudantes[], int numero_alunos ,int numero_estudante_procurar);
+
 void alterar_nota_final_estudante(t_aluno vetor_estudantes[], int numero_alunos);
 void mostrar_estatisticas(t_aluno vetor_estudantes[], int numero_alunos);
 int ler_ficheiro_binario(t_aluno vetor_estudantes[]);
-void ler_regime_estudante(char []);
+//     /\
+//     |
+//  antigos
 
 int menu_opcoes(void);
 int menu_opcoes_estudantes(void);
@@ -104,6 +112,11 @@ int menu_opcoes_exercicios(void);
 int menu_opcoes_fichas(void);
 int menu_opcoes_submicoes(void);
 int menu_opcoes_estatisticas(void);
+
+int procurar_estudante(t_aluno vetor_estudantes[], int numero_alunos ,int numero_estudante_procurar);
+int procurar_exercicio(t_exercicio vetor_exercicios[], int numero_exercicios ,int numero_exercicio_procurar);
+int procurar_ficha(t_ficha vetor_fichas[], int numero_fichas ,int numero_ficha_procurar);
+int procurar_submissao(t_submissao vetor_submissoes[], int numero_submissoes ,int numero_submissao_procurar);
 
 int ler_numero_inteiro(char[],int, int);
 int confirmar_Sim_ou_Nao(char[], char[], char[]);
@@ -314,6 +327,9 @@ int main() {
     } while (sair != 1);
 }
 
+//   menus
+//    |
+//   \/
 //le numero inteiro
 int ler_numero_inteiro(char texto[],int min, int max){
     int num = 0;
@@ -460,6 +476,10 @@ int menu_opcoes_estatisticas(void){
     return opcao;
 }
 
+// confirmar saida
+//    |
+//   \/
+
 //confirmar saida
 int confirmar_Sim_ou_Nao(char texto[], char texto_cancelado[], char texto_confirmado[]) {
     char opcao;
@@ -489,21 +509,9 @@ int confirmar_Sim_ou_Nao(char texto[], char texto_cancelado[], char texto_confir
     return sair;
 }
 
-
-
-
-
-/*
-   old bs 
-      |   
-     \/   
-*/
-
-
-
 //ler dados estudantes
-int ler_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos) {
-    int regime = 0, contador = numero_alunos + 1, numero_aluno_procurar = 0, flag_estudante_procurado = 0;
+int ler_dados_estudante(t_estudante vetor_estudantes[],int numero_alunos) {
+    int  contador = numero_alunos + 1, numero_aluno_procurar = 0, flag_estudante_procurado = 0;
     SYSTEMTIME t; // Declara a strutura SYSTEMTIME
     GetLocalTime(&t); //recebe o tempo local do sistema
     vetor_estudantes[numero_alunos].id = contador; //id
@@ -517,39 +525,69 @@ int ler_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos) {
             printf("\nO aluno com o numero indicado ja se encontra registado escolha outro numero\n"); //mensagem de erro
         }
     } while (flag_estudante_procurado != -1);
-
     printf("\nInsira o nome do estudante: "); //nome do aluno
     fgets(vetor_estudantes[numero_alunos].nome, TAMANHO_STRING, stdin);
     vetor_estudantes[numero_alunos].nome[strcspn(vetor_estudantes[numero_alunos].nome, "\n")] = '\0'; //Usamos o strcspn para tirar o Enter após colocar o nome
-
-
-
-    ler_regime_estudante(vetor_estudantes[numero_alunos].regime); //regime do estudante
-    vetor_estudantes[numero_alunos].nota_final = ler_numero_inteiro("Insira a nota final (min 0 max 20) do estudante", 0, 20); //ler nota final
-    vetor_estudantes[numero_alunos].data_lancamento.dia = t.wDay; //data - dia
-    vetor_estudantes[numero_alunos].data_lancamento.mes = t.wMonth; //data - mes
-    vetor_estudantes[numero_alunos].data_lancamento.ano = t.wYear; //data - ano
+    vetor_estudantes[numero_alunos].e_mail = strcat(vetor_estudantes[numero_alunos].numero, "@my.ipleiria.pt");
     return contador;
 }
 
-//ler regime estudante
-void ler_regime_estudante(char regime[]) {
-    int opcao;
-    do{
-        printf("\n(1) - Diurno\n(2) - Pos Laboral\nInsira o regime do estudante: "); //regime do aluno
-        scanf("%d",&opcao);
-        fflush(stdin);
-        if  (opcao != 1 && opcao != 2) {
-            printf("O valor inserido não se encontra de entre as opcoes apresentadas!!!\nPorfavor insira");
+//ler fichas
+int ler_dados_ficha(t_ficha vetor_fichas[],int numero_fichas) {
+    int  contador = numero_fichas + 1;
+    int numero_ficha_procurar = 0, flag_ficha_procurado = 0; //vai ser usado no futuro para procurar fichas para evitar que sejam repetidas
+    SYSTEMTIME t; // Declara a strutura SYSTEMTIME
+    GetLocalTime(&t); //recebe o tempo local do sistema
+    vetor_fichas[numero_fichas].id = contador; //id
+    do {
+        numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha (este deve estar compreendido entre 0 e 10)",0,MAXIMO_FICHAS); //pede e devolve o numero da ficha
+        flag_ficha_procurado = procurar_ficha(vetor_fichas,numero_fichas, numero_ficha_procurar); //manda para a função
+        if (flag_ficha_procurado == -1) {
+            vetor_fichas[numero_fichas].nome == strcat("Ficha ",flag_ficha_procurado); //gguarda o novo nome da ficha se não tiver sido encontrado
         } else {
-            if (opcao == 1) {
-                strcpy(regime,"Diurno");
-            } else {
-                strcpy(regime,"Pos Laboral");
-            }
+            system("cls");
+            printf("\nO Ficha com o nnumero indicada ja se encontra registada escolha outro numero para a sua ficha\n"); //mensagem de erro
         }
-    } while (opcao != 1 && opcao != 2);
+    } while (flag_ficha_procurado != -1);
+    printf("\nInsira o nome do estudante: "); //nome do aluno
+    fgets(vetor_fichas[numero_fichas].nome, TAMANHO_STRING, stdin);
+    vetor_fichas[numero_fichas].nome[strcspn(vetor_fichas[numero_fichas].nome, "\n")] = '\0'; //Usamos o strcspn para tirar o Enter após colocar o nome
+    vetor_fichas[numero_fichas].data_publi.dia = t.wDay; //data - dia
+    vetor_fichas[numero_fichas].data_publi.mes = t.wMonth; //data - mes
+    vetor_fichas[numero_fichas].data_publi.ano = t.wYear; //data - ano
+    return contador;
 }
+
+//procura estudante
+int procurar_estudante(t_aluno vetor_estudantes[], int numero_alunos,int numero_estudante_procurar) {
+    int indice = 0, indice_aluno = -1;
+    for (indice = 0; indice < numero_alunos; indice++){
+        if (vetor_estudantes[indice].numero == numero_estudante_procurar) {
+            indice_aluno = indice;
+        }
+    }
+    return indice_aluno;
+}
+
+//procura estudante
+int procurar_ficha(t_ficha vetor_fichas[], int numero_fichas,int numero_fichas_procurar) {
+    int indice = 0, indice_ficha = -1;
+    for (indice = 0; indice < numero_fichas; indice++){
+        if (vetor_fichas[indice].nome == strcat("Ficha ",numero_fichas_procurar)) {
+            indice_ficha = indice;
+        }
+    }
+    return indice_ficha;
+}
+
+/*
+   old bs 
+      |   
+     \/   
+*/
+
+
+
 
 //mostrar o vetor
 void mostrar_dados_estudante(t_aluno vetor_estudantes[],int numero_alunos){
@@ -601,16 +639,7 @@ int ler_ficheiro_binario(t_aluno vetor_estudantes[]) {
     return numero_estudantes;
 }
 
-//procura estudante
-int procurar_estudante(t_aluno vetor_estudantes[], int numero_alunos,int numero_estudante_procurar) {
-    int indice = 0, indice_aluno = -1;
-    for (indice = 0; indice < numero_alunos; indice++){
-        if (vetor_estudantes[indice].numero == numero_estudante_procurar) {
-            indice_aluno = indice;
-        }
-    }
-    return indice_aluno;
-}
+
 
 //alterar a nota final do estudante
 void alterar_nota_final_estudante(t_aluno vetor_estudantes[], int numero_alunos) {
