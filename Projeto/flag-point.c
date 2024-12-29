@@ -1,11 +1,15 @@
 //bibliotecas
-#include<stdlib.h>  // 1 Permite usar o  system("cls"); (limpar o ecrã)   fflush(stdin);  (para limpar o buffer do teclado)
-#include<stdio.h>   // 2 Biblioteca standart de input e output
-#include<locale.h>  // 3 Para poder por uma lingua de um local permitindo a utilização de certos tipos de carcteres como por exemplo "�"
-#include<ctype.h>   // 4 Permite fazer certos simbolos corretamente
-#include<math.h>    // 5 Para calcular expoentes com a função pow(b,e) e mais algumas funções matematicas
-#include<time.h>    // 6 Para usar o srand(time(NULL)); 
-#include<windows.h> // 7 Para poder utilizar o SYSTEMTIME
+#include<stdlib.h> // 1 Permite usar o  system("cls"); (limpar o ecrã)   fflush(stdin);  (para limpar o buffer do teclado)
+#include<stdio.h>  // 2 Biblioteca standart de input e output
+#include<unistd.h> // 3 sleep (1) (para o programa pelo tempo determinado pode ou não vir a ser utilizado se for vai estar aqui se não for vou retirar);
+#include<conio.h>  // 4 Coloquei este aqui por causa do getch() (é um função par aobter caracter mas que tambem pode ser usado como um stopper a espera de a inserção de qualquer simbolo ou caracter do teclado, utilizado correntemente assguir a mensagem "prima qualquer tecla para continuar") 
+#include<locale.h> // 5 Para poder por uma lingua de um local permitindo a utilização de certos tipos de carcteres como por exemplo "�"
+#include<ctype.h>  // 6 Permite fazer certos simbolos corretamente
+#include<math.h>   // 7 Para calcular expoentes com a função pow(b,e) e mais algumas funções matematicas
+#include<time.h>   // 8 Para usar o srand(time(NULL)); 
+#include<windows.h>// 9 Para poder utilizar o system("color 0a"); trocar 0a para a cor desejada utiliza o formato do CMD cor do texto � o segundo digito("a") cor do background � o primeiro("0")
+#include<string.h> // 10 Manipulação de strings
+#include<stdbool.h>// 11 Para poder usar files boolean (true/false)
 
 //constantes
 #define TAMANHO_STRING 100
@@ -65,17 +69,21 @@ typedef struct
     int nota;
 } t_submissao;
 
+
+
+
+
+
 //prototipos de funções
 
 //  antigos 
 //    |
 //   \/
 void gravar_ficheiro_binario(t_estudante vetor_estudantes[],int numero_alunos);
-int ler_ficheiro_binario(t_estudante vetor_estudantes[]);
 
 void alterar_nota_final_estudante(t_estudante vetor_estudantes[], int numero_alunos);
 void mostrar_estatisticas(t_estudante vetor_estudantes[], int numero_alunos);
-
+int ler_ficheiro_binario(t_estudante vetor_estudantes[]);
 //     /\
 //     |
 //  antigos
@@ -109,12 +117,6 @@ int confirmar_Sim_ou_Nao(char[], char[], char[]);
 void mostrar_dados_estudante(t_estudante vetor_estudantes[],int numero_alunos);
 void mostrar_dados_ficha(t_ficha vetor_fichas[],int numero_fichas);
 void mostrar_dados_exercicios(t_exercicio vetor_exercicios[],int numero_exercicios,t_ficha vetor_fichas[],int numero_fichas);
-
-
-void print_detalhes_estudante(t_estudante vetor_estudantes[], int indice);
-void print_detalhes_ficha(t_ficha vetor_fichas[], int indice);
-void print_detalhes_exercicio(t_exercicio vetor_exercicios[], int indice);
-
 
 //função main
 int main() {
@@ -289,8 +291,8 @@ int menu_opcoes(void){
         printf("\n");
         printf("********* Menu de Opcoes ********\n");
         printf("* (1) Menu Dados Estudante      *\n");
-        printf("* (2) Menu Dados Fichas         *\n");
-        printf("* (3) Menu Dados Exercicio      *\n");
+        printf("* (2) Menu Dados Exercicio      *\n");
+        printf("* (3) Menu Dados Fichas         *\n");
         printf("* (4) Menu Dados Submissoes     *\n");
         printf("* (5) Menu Estatisticas         *\n");
         printf("* (6) Gravar dados em Ficheiro! *\n");
@@ -625,22 +627,22 @@ void mostrar_dados_estudante(t_estudante vetor_estudantes[],int numero_alunos){
             numero_aluno_procurar = ler_numero_inteiro("\nInsira o numero do estudante a procurar (deve estar compreendido entre 2230001 e 2249999)",2230001,2249999);
             indice = procurar_estudante(vetor_estudantes, numero_alunos,numero_aluno_procurar);
             if (indice != -1) {
-                print_detalhes_estudante(vetor_estudantes, indice);
+                printf("\nId do Estudante: %d\n", vetor_estudantes[indice].id);
+                printf("Numero do Estudante: %d\n", vetor_estudantes[indice].numero);
+                printf("Nome do Estudante: %s\n", vetor_estudantes[indice].nome);
+                printf("E-mail do Estudante: %s\n", vetor_estudantes[indice].e_mail);
             } else {
                 printf("O numero inserido não foi encontrado nos registos, carregue os dados dos ficheiros ou insira estudantes!");
             }
         } else {
             for (indice = 0; indice < numero_alunos; indice++){
-                print_detalhes_estudante(vetor_estudantes, indice);
+                printf("\nId do Estudante: %d\n", vetor_estudantes[indice].id);
+                printf("Numero do Estudante: %d\n", vetor_estudantes[indice].numero);
+                printf("Nome do Estudante: %s\n", vetor_estudantes[indice].nome);
+                printf("E-mail do Estudante: %s\n", vetor_estudantes[indice].e_mail);
             } 
         }
     }
-}
-void print_detalhes_estudante(t_estudante vetor_estudantes[], int indice) {
-    printf("\nId do Estudante: %d\n", vetor_estudantes[indice].id);
-    printf("Numero do Estudante: %d\n", vetor_estudantes[indice].numero);
-    printf("Nome do Estudante: %s\n", vetor_estudantes[indice].nome);
-    printf("E-mail do Estudante: %s\n", vetor_estudantes[indice].e_mail);
 }
 
 //mostrar o vetor ficha
@@ -657,22 +659,22 @@ void mostrar_dados_ficha(t_ficha vetor_ficha[],int numero_ficha){
             numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha a procurar (este deve estar compreendido entre 0 e 10)",0,MAXIMO_EXE);
             indice = procurar_ficha(vetor_ficha, numero_ficha, numero_ficha_procurar);
             if (indice != -1) {
-                print_detalhes_ficha(vetor_ficha,indice);
+                printf("\nId da ficha: %d\n", vetor_ficha[indice].id);
+                printf("Nome da ficha: %s\n", vetor_ficha[indice].nome);
+                printf("Total de Exercicios: %d\n", vetor_ficha[indice].total_exe);
+                printf("Data de Publicacao: %d\\%d\\%d\n", vetor_ficha[indice].data_publi.dia, vetor_ficha[indice].data_publi.mes,vetor_ficha[indice].data_publi.ano);
             } else {
                 printf("O numero inserido nao foi encontrado nos registos, carregue os dados dos ficheiros ou insira uma ou mais fichas!");
             }
         } else {
             for (indice = 0; indice < numero_ficha; indice++){
-                print_detalhes_ficha(vetor_ficha,indice);
+                printf("\nId da ficha: %d\n", vetor_ficha[indice].id);
+                printf("Nome da ficha: %s\n", vetor_ficha[indice].nome);
+                printf("Total de Exercicios: %d\n", vetor_ficha[indice].total_exe);
+                printf("Data de Publicacao: %d\\%d\\%d\n", vetor_ficha[indice].data_publi.dia, vetor_ficha[indice].data_publi.mes,vetor_ficha[indice].data_publi.ano);
             } 
         }
     }
-}
-void print_detalhes_ficha(t_ficha vetor_fichas[], int indice) {
-    printf("\nId da ficha: %d\n", vetor_fichas[indice].id);
-    printf("Nome da ficha: %s\n", vetor_fichas[indice].nome);
-    printf("Total de Exercicios: %d\n", vetor_fichas[indice].total_exe);
-    printf("Data de Publicacao: %d\\%d\\%d\n", vetor_fichas[indice].data_publi.dia, vetor_fichas[indice].data_publi.mes,vetor_fichas[indice].data_publi.ano);
 }
 
 //mostrar o vetor exercicios
@@ -690,24 +692,26 @@ void mostrar_dados_exercicios(t_exercicio vetor_exercicios[], int numero_exercic
             numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha do exercicio a procurar (este deve estar compreendido entre 0 e 10)",0,MAXIMO_FICHAS);
             indice = procurar_exercicio(vetor_exercicios, numero_exercicios, numero_exercicio_procurar, vetor_fichas, numero_fichas, numero_ficha_procurar);
             if (indice != -1) {
-                print_detalhes_exercicio(vetor_exercicios, indice);
+                printf("\nID do Exercicio: %d\n", vetor_exercicios[indice].id);
+                printf("ID da Ficha: %d\n", vetor_exercicios[indice].id_ficha);
+                printf("Nome do Exercicio: %s\n", vetor_exercicios[indice].nome);
+                printf("Dificuldade: %s\n", vetor_exercicios[indice].dificuldade);
+                printf("Tipo de Solucao: %s\n", vetor_exercicios[indice].tipo_solucao);
             } else {
                 printf("O numero inserido nao foi encontrado nos registos, carregue os dados dos ficheiros ou insira uma ou mais fichas!");
             }
         } else {
             for (indice = 0; indice < numero_exercicios; indice++){
-                print_detalhes_exercicio(vetor_exercicios, indice);
+                printf("\nID do Exercicio: %d\n", vetor_exercicios[indice].id);
+                printf("ID da Ficha: %d\n", vetor_exercicios[indice].id_ficha);
+                printf("Nome do Exercicio: %s\n", vetor_exercicios[indice].nome);
+                printf("Dificuldade: %s\n", vetor_exercicios[indice].dificuldade);
+                printf("Tipo de Solucao: %s\n", vetor_exercicios[indice].tipo_solucao);
             } 
         }
     }
 }
-void print_detalhes_exercicio(t_exercicio vetor_exercicios[], int indice) {
-    printf("\nID do Exercicio: %d\n", vetor_exercicios[indice].id);
-    printf("ID da Ficha: %d\n", vetor_exercicios[indice].id_ficha);
-    printf("Nome do Exercicio: %s\n", vetor_exercicios[indice].nome);
-    printf("Dificuldade: %s\n", vetor_exercicios[indice].dificuldade);
-    printf("Tipo de Solucao: %s\n", vetor_exercicios[indice].tipo_solucao);
-}
+
 
 
 
