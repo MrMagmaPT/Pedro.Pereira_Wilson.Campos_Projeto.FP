@@ -1,7 +1,7 @@
 //bibliotecas
 #include<stdlib.h>  // 1 Permite usar o  system("cls"); (limpar o ecrã)   fflush(stdin);  (para limpar o buffer do teclado)
 #include<stdio.h>   // 2 Biblioteca standart de input e output
-#include<unistd.h>  // 3 sleep (1) (para o programa pelo tempo determinado pode ou não vir a ser utilizado se for vai estar aqui se não for vou retirar);
+//#include<unistd.h>  // 3 sleep (1) (para o programa pelo tempo determinado pode ou não vir a ser utilizado se for vai estar aqui se não for vou retirar);
 #include<conio.h>   // 4 Coloquei este aqui por causa do getch() (é um função par aobter caracter mas que tambem pode ser usado como um stopper a espera de a inserção de qualquer simbolo ou caracter do teclado, utilizado correntemente assguir a mensagem "prima qualquer tecla para continuar") 
 #include<locale.h>  // 5 Para poder por uma lingua de um local permitindo a utilização de certos tipos de carcteres como por exemplo "�"
 #include<ctype.h>   // 6 Permite fazer certos simbolos corretamente

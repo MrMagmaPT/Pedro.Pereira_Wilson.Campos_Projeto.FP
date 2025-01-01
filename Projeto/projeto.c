@@ -1,11 +1,24 @@
 //bibliotecas
-#include<stdlib.h>  // 1 Permite usar o  system("cls"); (limpar o ecrã)   fflush(stdin);  (para limpar o buffer do teclado)
-#include<stdio.h>   // 2 Biblioteca standart de input e output
-#include<locale.h>  // 3 Para poder por uma lingua de um local permitindo a utilização de certos tipos de carcteres como por exemplo "�"
-#include<ctype.h>   // 4 Permite fazer certos simbolos corretamente
-#include<math.h>    // 5 Para calcular expoentes com a função pow(b,e) e mais algumas funções matematicas
-#include<time.h>    // 6 Para usar o srand(time(NULL)); 
-#include<windows.h> // 7 Para poder utilizar o SYSTEMTIME
+#include<stdlib.h>  
+// 1 Permite usar o  system("cls"); (limpar o ecrã)   fflush(stdin);  (para limpar o buffer do teclado) 
+//nota:(" %c") != fflush(stdin), 
+//o primeiro não limpa todo o buffer apenas uma parte, enquanto o segundo limpa todo o buffer, 
+//uma solução elegante e simples para problemas onde caracteres como o 
+//(~)til e a bolinha de numero (nº) podem criar problemas em inputs e menus.
+#include<stdio.h>   
+// 2 Biblioteca standart de input e output
+#include<locale.h>  
+// 3 Para poder por uma lingua de um local permitindo a utilização de certos tipos de carcteres como por exemplo "�" mesma situação do de baixo
+#include<ctype.h>   
+// 4 Permite fazer certos simbolos corretamente (por algum motivo não está a funcionar se antes da entrega ele não estiver a funcionar eu removo esta biblioteca)
+#include<math.h>    
+// 5 Para calcular expoentes com a função pow(b,e) e mais algumas funções matematicas
+#include<time.h>    
+// 6 Para usar o srand(time(NULL)); e outras funções relacionadas a horarios e datas
+#include<windows.h> 
+// 7 Para poder utilizar o SYSTEMTIME
+#include<conio.h>   
+// 8 Permite usar o getch(); (substitui parcialmente o getchar e permite pedir ao utilizador por inputs sem os guardar utilizado recorrentemente como metodo de "parar" um codigo para apresentar informação até ao utilizador escolher continuar, recorrente-mente utilizado no fim de menus de saida para informar o utlizador de saida do programa sem o mesmo fechar de forma abrupta)
 
 //constantes
 #define TAMANHO_STRING 100
@@ -16,6 +29,8 @@
 #define NOTA_MAX 100
 #define NOTA_MIN 0
 
+//constantes para o caminho de cada ficheiro, por questão de praticidade vamos criar 1 ficheiro para cada coisa
+//um ficheiro para estudantes, um para fichas, um para exercicio, e um para submissoes
 #define FILE_PATH_ESTUDANTE "SecFiles/ESTUDANTES.dat"
 #define FILE_PATH_FICHA "SecFiles/FICHA.dat"
 #define FILE_PATH_EXERCICIO "SecFiles/EXERCICIOS.dat"
@@ -73,7 +88,6 @@ typedef struct
 void gravar_ficheiro_binario(t_estudante vetor_estudantes[],int numero_alunos);
 int ler_ficheiro_binario(t_estudante vetor_estudantes[]);
 
-void alterar_nota_final_estudante(t_estudante vetor_estudantes[], int numero_alunos);
 void mostrar_estatisticas(t_estudante vetor_estudantes[], int numero_alunos);
 
 //     /\
@@ -104,12 +118,13 @@ void ler_entre_2_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[]
 void ler_entre_3_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[],char opcao3[]);
 int ler_numero_inteiro(char[],int, int);
 int confirmar_Sim_ou_Nao(char[], char[], char[]);
+int verificar_limite_exercicios_ficha(t_exercicio vetor_exercicios[], int numero_exercicios, int id_ficha_procurar, t_ficha vetor_fichas[], int numero_fichas);
+void le_string_para_vetor(char vetor[], char mensagem[]);
 
 //mostrar
 void mostrar_dados_estudante(t_estudante vetor_estudantes[],int numero_alunos);
 void mostrar_dados_ficha(t_ficha vetor_fichas[],int numero_fichas);
 void mostrar_dados_exercicios(t_exercicio vetor_exercicios[],int numero_exercicios,t_ficha vetor_fichas[],int numero_fichas);
-
 
 void print_detalhes_estudante(t_estudante vetor_estudantes[], int indice);
 void print_detalhes_ficha(t_ficha vetor_fichas[], int indice);
@@ -297,13 +312,15 @@ int menu_opcoes(void){
         printf("* (7) Ler dados de um Ficheiro! *\n");
         printf("* (0) Sair                      *\n");
         printf("********* Menu de Opcoes ********\n");
+        printf("Valores nao numericos vao ser interpretados\ncomo a ultima opçcao apresentada\n");
         printf("OPCAO:");
-        scanf("%d",&opcao); 
-        if (opcao != 1 && opcao != 2 && opcao != 3 && opcao != 4 && opcao != 5 && opcao != 6 && opcao != 7 && opcao != 0){
+        scanf("%d",&opcao);
+        fflush(stdin);
+        if (opcao < 0 || opcao > 7){
             system("cls");
             printf("\nO valor inserido nao se encontr na lista de opcoes,\nporfavor insira uma das opcoes indicadas\n");
         }
-    } while (opcao != 1 && opcao != 2 && opcao != 3 && opcao != 4 && opcao != 5 && opcao != 6 && opcao != 7 &&opcao != 0);
+    } while (opcao < 0 || opcao > 7);
     return opcao;
 }
 
@@ -317,13 +334,15 @@ int menu_opcoes_estudantes(void){
         printf("* (2) Mostrar Dados Estudante   *\n");
         printf("* (0) Voltar                    *\n");
         printf("******* Menu de Estudante *******\n");
+        printf("Valores nao numericos vao ser interpretados\ncomo a ultima opçcao apresentada\n");
         printf("OPCAO:");
-        scanf("%d",&opcao); 
-        if (opcao != 1 && opcao != 2 && opcao != 0){
+        scanf("%d",&opcao);
+        fflush(stdin);
+        if (opcao < 0 || opcao > 2){
             system("cls");
             printf("\nO valor inserido nao se encontr na lista de opcoes,\nporfavor insira uma das opcoes indicadas\n");
         }
-    } while (opcao != 1 && opcao != 2 && opcao != 0);
+    } while (opcao < 0 || opcao > 2);
     return opcao;
 }
 
@@ -337,13 +356,15 @@ int menu_opcoes_exercicios(void){
         printf("* (2) Mostrar Dados Exercicios  *\n");
         printf("* (0) Voltar                    *\n");
         printf("***** Menu de Exercicios ********\n");
+        printf("Valores nao numericos vao ser interpretados\ncomo a ultima opçcao apresentada\n");
         printf("OPCAO:");
-        scanf("%d",&opcao); 
-        if (opcao != 1 && opcao != 2 && opcao != 0){
+        scanf("%d",&opcao);
+        fflush(stdin);
+        if (opcao < 0 || opcao > 2){
             system("cls");
             printf("\nO valor inserido nao se encontr na lista de opcoes,\nporfavor insira uma das opcoes indicadas\n");
         }
-    } while (opcao != 1 && opcao != 2 && opcao != 0);
+    } while (opcao < 0 || opcao > 2);
     return opcao;
 }
 
@@ -357,13 +378,15 @@ int menu_opcoes_fichas(void){
         printf("* (2) Mostrar Dados Fichas      *\n");
         printf("* (0) Voltar                    *\n");
         printf("********* Menu de Fichas ********\n");
+        printf("Valores nao numericos vao ser interpretados\ncomo a ultima opçcao apresentada\n");
         printf("OPCAO:");
-        scanf("%d",&opcao); 
-        if (opcao != 1 && opcao != 2 && opcao != 0){
+        scanf("%d",&opcao);
+        fflush(stdin);
+        if (opcao < 0 || opcao > 2){
             system("cls");
             printf("\nO valor inserido nao se encontr na lista de opcoes,\nporfavor insira uma das opcoes indicadas\n");
         }
-    } while (opcao != 1 && opcao != 2 && opcao != 0);
+    } while (opcao < 0 || opcao > 2);
     return opcao;
 }
 
@@ -377,13 +400,15 @@ int menu_opcoes_submicoes(void){
         printf("* (2) Mostrar Dados Submissoes  *\n");
         printf("* (0) Voltar                    *\n");
         printf("****** Menu de Submicoes ********\n");
+        printf("Valores nao numericos vao ser interpretados\ncomo a ultima opçcao apresentada\n");
         printf("OPCAO:");
-        scanf("%d",&opcao); 
-        if (opcao != 1 && opcao != 2 && opcao != 0){
+        scanf("%d",&opcao);
+        fflush(stdin);
+        if (opcao < 0 || opcao > 2){
             system("cls");
             printf("\nO valor inserido nao se encontr na lista de opcoes,\nporfavor insira uma das opcoes indicadas\n");
         }
-    } while (opcao != 1 && opcao != 2 && opcao != 0);
+    } while (opcao < 0 || opcao > 2);
     return opcao;
 }
 
@@ -398,26 +423,34 @@ int menu_opcoes_estatisticas(void){
         printf("* (3) %% Exercicio resolvido    *\n");
         printf("* (0) Voltar                    *\n");
         printf("******* Menu Estatisticas *******\n");
+        printf("Valores nao numericos vao ser interpretados\ncomo a ultima opçcao apresentada\n");
         printf("OPCAO:");
-        scanf("%d",&opcao); 
-        if (opcao != 1 && opcao != 2 && opcao != 3 && opcao != 0){
+        scanf("%d",&opcao);
+        fflush(stdin);
+        if (opcao < 0 || opcao > 2){
             system("cls");
             printf("\nO valor inserido nao se encontr na lista de opcoes,\nporfavor insira uma das opcoes indicadas\n");
         }
-    } while (opcao != 1 && opcao != 2 && opcao != 3 && opcao != 0);
+    } while (opcao < 0 || opcao > 2);
     return opcao;
 }
 
 //  processamento de dados
-//         |
-//        \/
+//   ___________|___________
+//  |                      |
+// \/                     \/
+
+
+//  funções genericas
+//        |
+//       \/
 
 //ler ler entre 2 opcoes dadas pelo programador e atibuir ao vetor enviado
 void ler_entre_2_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[]) {
     int opcao = 0;
     do{
         system("cls");
-        printf("\n(1) - %s\n(2) - %s\n%s",opcao1,opcao2,mensagem);
+        printf("\n(1) - %s\n(2) - %s\n%s: ",opcao1,opcao2,mensagem);
         scanf("%d",&opcao);
         fflush(stdin);
         if  (opcao != 1 && opcao != 2) {
@@ -436,7 +469,7 @@ void ler_entre_2_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[]
 void ler_entre_3_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[], char opcao3[]) {
     int opcao = 0;
     do{
-        printf("\n(1) - %s\n(2) - %s\n(3) - %s\n%s\n",opcao1,opcao2,opcao3,mensagem);
+        printf("\n(1) - %s\n(2) - %s\n(3) - %s\n%s: ",opcao1,opcao2,opcao3,mensagem);
         scanf("%d",&opcao);
         fflush(stdin);
         if  (opcao != 1 && opcao != 2 && opcao != 3) {
@@ -451,6 +484,16 @@ void ler_entre_3_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[]
             }
         }
     } while (opcao != 1 && opcao != 2 && opcao != 3);
+}
+
+//le string e altera a mesma diretamente no vetor
+void le_string_para_vetor(char vetor[], char mensagem[]) {
+    char string_a_guaradar[TAMANHO_STRING]; //declara um "buffer" de string onde vamos guardar a resposta do utilizador e manipular a mesma e dps vamos utilizar o resultado final deste para por no vetor enviado
+    printf("\n%s: ",mensagem); //apresenta a mensagem envaida pelo utilizador
+    fgets(string_a_guaradar, TAMANHO_STRING, stdin); //apanha a resposta em string e insere a mesma no vetor 
+    string_a_guaradar[strcspn(string_a_guaradar, "\n")] = '\0'; //remove os caracteres de troca de linha e mete ed fim de string
+    strcpy(vetor, string_a_guaradar); //copia a string acabadinha de montar para dentro do vetor enviado
+    fflush(stdin); //limpa o buffer de entrada TOTAL (pode ser trocado por um do-while muito especifico que faz o mesmo mas não é tão facil de ler se me der vontade faço o do while em formato de fução e "crio" um novo metodo so para limpar o teclado)
 }
 
 //le numero inteiro
@@ -469,14 +512,14 @@ int ler_numero_inteiro(char texto[],int min, int max){
     return num;
 }
 
-//confirmar saida
+//confirmar sim ou não
 int confirmar_Sim_ou_Nao(char texto[], char texto_cancelado[], char texto_confirmado[]) {
     char opcao;
     int sair;
     do{
         printf("%s",texto);
-        fflush(stdin);
         scanf(" %c", &opcao);
+        fflush(stdin);
         if (opcao == 'N' || opcao == 'n')
         {
             printf("%s",texto_cancelado);
@@ -492,12 +535,16 @@ int confirmar_Sim_ou_Nao(char texto[], char texto_cancelado[], char texto_confir
     return sair;
 }
 
+//  Leitura de dados
+//        |
+//       \/
+
 //ler dados estudantes
 int ler_dados_estudante(t_estudante vetor_estudantes[],int numero_alunos) {
     int  contador = numero_alunos + 1, numero_aluno_procurar = 0, flag_estudante_procurado = 0;
-    //char numero_aluno_str[20];
+    char e_email_estudante_completo[TAMANHO_STRING];
     vetor_estudantes[numero_alunos].id = contador; //id
-    do {
+    do { //numero do estudante
         numero_aluno_procurar = ler_numero_inteiro("\nInsira o numero do estudante (deve estar compreendido entre 2230001 e 2249999)",2230001,2249999); //pede e devolve o numero de aluno
         flag_estudante_procurado = procurar_estudante(vetor_estudantes,numero_alunos, numero_aluno_procurar); //manda para a função
         if (flag_estudante_procurado == -1) {
@@ -507,26 +554,21 @@ int ler_dados_estudante(t_estudante vetor_estudantes[],int numero_alunos) {
             printf("\nO aluno com o numero indicado ja se encontra registado escolha outro numero\n"); //mensagem de erro
         }
     } while (flag_estudante_procurado != -1);
-    printf("\nInsira o nome do estudante: "); //nome do aluno
-    fgets(vetor_estudantes[numero_alunos].nome, TAMANHO_STRING, stdin);
-    vetor_estudantes[numero_alunos].nome[strcspn(vetor_estudantes[numero_alunos].nome, "\n")] = '\0'; //Usamos o strcspn para tirar o Enter após colocar o nome
-    //sprintf(vetor_estudantes[numero_alunos].e_mail, "%d@my.ipleiria.pt", numero_aluno_procurar);
-    printf("\nInsira o e-mail do estudante: "); //email do estudant
-    fgets(vetor_estudantes[numero_alunos].e_mail, TAMANHO_STRING, stdin);
-    vetor_estudantes[numero_alunos].e_mail[strcspn(vetor_estudantes[numero_alunos].e_mail, "\n")] = '\0'; //Usamos o strcspn para tirar o Enter após colocar o nome
+    le_string_para_vetor(vetor_estudantes[numero_alunos].nome, "Insira o nome do estudante"); //guarda o nome do estudantenome do estudante
+    sprintf(e_email_estudante_completo, "%d@my.ipleiria.pt", numero_aluno_procurar); //atrbui o resultado de um suposto printf a um vetor de caracteres (desta maneira podemos utilizar variveis de ints em situações com chars)
+    strcpy(vetor_estudantes[numero_alunos].e_mail, e_email_estudante_completo); // copia o valor dentro do vetor de caracteres com o e-mail completo para o e_mail do estudante dentro do vetor (podia ter feito os dois juntos mas para ficar mais legivel separei contudo uma verção mais compacta destas duas linhas é possivel e essa mesma verção não utiliza o vetor de caracteres extra)
     return contador;
 }
 
 //ler dados fichas 
 int ler_dados_ficha(t_ficha vetor_fichas[],int numero_fichas) {
-    int contador = numero_fichas + 1;
-    int numero_ficha_procurar = 0, flag_ficha_procurado = 0; //vai ser usado no futuro para procurar fichas para evitar que sejam repetidas
-    char nome_ficha[50];  // TEMP - Até resposta do stor
-    SYSTEMTIME t; // Declara a strutura SYSTEMTIME
+    int contador = numero_fichas + 1, numero_ficha_procurar = 0, flag_ficha_procurado = 0;
+    char nome_ficha[TAMANHO_STRING];  // TEMP - Até resposta do stor
+    SYSTEMTIME t; // Declara a strutura SYSTEMTIME mas com o nome t
     GetLocalTime(&t); //recebe o tempo local do sistema
     vetor_fichas[numero_fichas].id = contador; //id
     do { //nome da ficha
-        numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha (este deve estar compreendido entre 0 e 10)",0,MAXIMO_FICHAS); //pede e devolve o numero da ficha
+        numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha (este deve estar compreendido entre 1 e 10)",1,MAXIMO_FICHAS); //pede e devolve o numero da ficha
         flag_ficha_procurado = procurar_ficha(vetor_fichas,numero_fichas, numero_ficha_procurar); //manda para a função
         if (flag_ficha_procurado == -1) {
             sprintf(nome_ficha, "Ficha %d", numero_ficha_procurar); // TEMP - Até resposta do stor
@@ -536,7 +578,7 @@ int ler_dados_ficha(t_ficha vetor_fichas[],int numero_fichas) {
             printf("\nA Ficha com o numero indicada ja se encontra registada escolha outro numero para a sua ficha\n"); //mensagem de erro
         }
     } while (flag_ficha_procurado != -1);
-    vetor_fichas[numero_fichas].total_exe = ler_numero_inteiro("\nInsira o numero de exercicios da ficha (este deve estar compreendido entre 0 e 10)",0,MAXIMO_EXE);
+    vetor_fichas[numero_fichas].total_exe = ler_numero_inteiro("\nInsira o numero de exercicios da ficha (este deve estar compreendido entre 0 e 10)",1,MAXIMO_EXE);
     vetor_fichas[numero_fichas].data_publi.dia = t.wDay; //data - dia
     vetor_fichas[numero_fichas].data_publi.mes = t.wMonth; //data - mes
     vetor_fichas[numero_fichas].data_publi.ano = t.wYear; //data - ano
@@ -544,29 +586,37 @@ int ler_dados_ficha(t_ficha vetor_fichas[],int numero_fichas) {
 }
 
 //ler dados exercicios
-int ler_dados_exercicios(t_exercicio vetor_exercicios[],int numero_exercicios,t_ficha vetor_fichas[],int numero_fichas) {
-    int  contador = numero_exercicios + 1;
-    int numero_ficha_procurar = 0, flag_exercicio_procurado = 0, numero_exercicio_procurar = 0;
-    vetor_exercicios[numero_exercicios].id = contador; //id
-    do { //id_ficha
-        numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha a que este exercicio vai estar ligado(este deve estar compreendido entre 0 e 10)",0,MAXIMO_FICHAS); //pede e devolve o numero da ficha
-        numero_exercicio_procurar = ler_numero_inteiro("\nInsira o numero do exercicio a procurar (este deve estar compreendido entre 0 e 10)",0,MAXIMO_EXE); //pede e devolve o numero do exercicios
-        flag_exercicio_procurado = procurar_exercicio(vetor_exercicios, numero_exercicios, numero_exercicio_procurar, vetor_fichas, numero_fichas, numero_ficha_procurar); //manda para a função
-        if (flag_exercicio_procurado == -2) {
-            vetor_exercicios[numero_exercicios].id_ficha = flag_exercicio_procurado;
-            printf("\nExercicio encontrada, exercicio associado à ficha selecionada!\n"); //mensagem de sucesso
+int ler_dados_exercicios(t_exercicio vetor_exercicios[], int numero_exercicios, t_ficha vetor_fichas[], int numero_fichas) {
+    int contador = numero_exercicios + 1;
+    int numero_ficha_procurar = 0, flag_exercicio_procurado = 0, numero_exercicio_procurar = 0, id_ficha_encontrada = -1;
+    vetor_exercicios[numero_exercicios].id = contador;
+    do {
+        numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha a que este exercicio vai estar ligado (entre 1 e 10)", 1, MAXIMO_FICHAS);
+        id_ficha_encontrada = procurar_ficha(vetor_fichas, numero_fichas, numero_ficha_procurar);
+        if (id_ficha_encontrada == -1) {
+            printf("\nFicha nao encontrada. Insira um numero de ficha valido.\n");
         } else {
-            system("cls");
-            printf("\nJá existe um exercicio com numero indicado na ficha indicada,\n insira um exercicio ainda não previamente registado neste ficha\n"); //mensagem de erro
+            if (verificar_limite_exercicios_ficha(vetor_exercicios, numero_exercicios, numero_ficha_procurar, vetor_fichas, numero_fichas) == -1) {
+                printf("\nNao e possivel adicionar mais exercicios a esta ficha.\n");
+            } else {
+                numero_exercicio_procurar = ler_numero_inteiro("\nInsira o numero do exercicio (entre 1 e 10)", 1, MAXIMO_EXE);
+                flag_exercicio_procurado = procurar_exercicio(vetor_exercicios, numero_exercicios, numero_exercicio_procurar, vetor_fichas, numero_fichas, numero_ficha_procurar);
+                if (flag_exercicio_procurado != -1) {
+                    printf("\nJa existe um exercicio com o numero indicado nesta ficha.\n");
+                }
+            }
         }
-    } while (flag_exercicio_procurado != -2 && flag_exercicio_procurado != -1);
-    printf("\nInsira o nome do exercicio: "); //nome do exercicio
-    fgets(vetor_exercicios[numero_exercicios].nome, TAMANHO_STRING, stdin);
-    vetor_exercicios[numero_exercicios].nome[strcspn(vetor_exercicios[numero_exercicios].nome, "\n")] = '\0'; //Usamos o strcspn para tirar o Enter após colocar o nome
-    ler_entre_2_opcoes(vetor_exercicios[numero_exercicios].tipo_solucao,"Insira o tipo de solução do exercicio: ","Algoritmo","Codigo");
-    ler_entre_3_opcoes(vetor_exercicios[numero_exercicios].dificuldade,"Insira a dificuldade do exercicio: ","Elevada","Media","Baixa");
+    } while (id_ficha_encontrada == -1 || flag_exercicio_procurado != -1);
+    vetor_exercicios[numero_exercicios].id_ficha = id_ficha_encontrada + 1;
+    le_string_para_vetor(vetor_exercicios[numero_exercicios].nome, "Insira o nome do exercicio");
+    ler_entre_2_opcoes(vetor_exercicios[numero_exercicios].tipo_solucao,"Insira o tipo de solucao do exercicio", "Algoritmo", "Codigo");
+    ler_entre_3_opcoes(vetor_exercicios[numero_exercicios].dificuldade,"Insira a dificuldade do exercicio", "Elevada", "Media", "Baixa");
     return contador;
 }
+
+//  procura de dados
+//         |
+//        \/
 
 //procura estudante
 int procurar_estudante(t_estudante vetor_estudantes[], int numero_alunos,int numero_estudante_procurar) {
@@ -582,11 +632,12 @@ int procurar_estudante(t_estudante vetor_estudantes[], int numero_alunos,int num
 //procura ficha
 int procurar_ficha(t_ficha vetor_fichas[], int numero_fichas,int numero_fichas_procurar) {
     int indice = 0, indice_ficha = -1;
-    char nome_ficha[TAMANHO_STRING]; // TEMP - Até resposta do stor
-    sprintf(nome_ficha, "Ficha %d", numero_fichas_procurar); // TEMP - Até resposta do stor
+    char nome_ficha[TAMANHO_STRING]; //Mesmo metodo utilizado anteriormente no codigo
+    sprintf(nome_ficha, "Ficha %d", numero_fichas_procurar); //Mesmo metodo utilizado anteriormente no codigo
     for (indice = 0; indice < numero_fichas; indice++){
-        if (strcmp(vetor_fichas[indice].nome, nome_ficha) == 0) { // TEMP - Até resposta do stor (o if aqui é o "problema")
+        if (strcmp(vetor_fichas[indice].nome, nome_ficha) == 0) { // Mesmo metodo utilizado anteriormente no codigo
             indice_ficha = indice;
+            
         }
     }
     return indice_ficha;
@@ -595,21 +646,49 @@ int procurar_ficha(t_ficha vetor_fichas[], int numero_fichas,int numero_fichas_p
 //procurar exericio
 int procurar_exercicio(t_exercicio vetor_exercicios[],int numero_exercicios,int numero_exercicio_procurar,t_ficha vetor_fichas[],int numero_fichas,int id_ficha_procurar){
     int indice_numero_fichas,indice_numero_exericios,indice_ficha=-1,indice_exercicio=-1;
-    
     indice_ficha = procurar_ficha(vetor_fichas, numero_fichas, numero_exercicio_procurar);
     if(indice_ficha == -1){
         system("cls");
-        printf("\nNão foram encontradas fichas com o numero indicado,\ninsira uma ficha já previamente registada\n");
-        indice_exercicio = -2;
+        printf("\nNao foram encontradas fichas com o numero indicado,\ninsira uma ficha ja previamente registada\n");
     } else {
         for(indice_numero_exericios=0;indice_numero_exericios<numero_exercicios;indice_numero_exericios++){
             if(vetor_exercicios[indice_numero_exericios].id==numero_exercicio_procurar && vetor_exercicios[indice_numero_exericios].id_ficha==id_ficha_procurar){
                 indice_exercicio=indice_numero_exericios;
+            } else {
+                indice_exercicio = -2;
             }
         }
     }
     return indice_exercicio;
 }
+
+//  Verificações
+//       |
+//      \/
+
+//verificara o limie de exercicios por ficha
+int verificar_limite_exercicios_ficha(t_exercicio vetor_exercicios[], int numero_exercicios, int id_ficha_procurar, t_ficha vetor_fichas[], int numero_fichas) {
+    int indice_ficha = procurar_ficha(vetor_fichas, numero_fichas, id_ficha_procurar);
+    if (indice_ficha == -1) {
+        printf("\nA ficha com o ID indicado nao existe.\n");
+        return -1;
+    }
+    int total_exercicios_ficha = 0;
+    for (int i = 0; i < numero_exercicios; i++) {
+        if (vetor_exercicios[i].id_ficha == indice_ficha) {
+            total_exercicios_ficha++;
+        }
+    }
+    if (total_exercicios_ficha >= vetor_fichas[indice_ficha].total_exe) {
+        printf("\nJa foi atingido o limite maximo de %d exercicios para esta ficha.\n", vetor_fichas[indice_ficha].total_exe);
+        return -1;
+    }
+    return 0;
+}
+
+// apresentação de dados    
+//        |
+//       \/
 
 //mostrar o vetor estudante
 void mostrar_dados_estudante(t_estudante vetor_estudantes[],int numero_alunos){
@@ -654,7 +733,7 @@ void mostrar_dados_ficha(t_ficha vetor_ficha[],int numero_ficha){
     } else {
         ler_entre_2_opcoes(escolha, "Escolha se quer apresentar todas as fichas ou uma em especifico:","Todas","Especifica");
         if (strcmp(escolha,"Especifica")  == 0) {
-            numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha a procurar (este deve estar compreendido entre 0 e 10)",0,MAXIMO_EXE);
+            numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha a procurar (este deve estar compreendido entre 1 e 10)",1,MAXIMO_EXE);
             indice = procurar_ficha(vetor_ficha, numero_ficha, numero_ficha_procurar);
             if (indice != -1) {
                 print_detalhes_ficha(vetor_ficha,indice);
@@ -686,8 +765,8 @@ void mostrar_dados_exercicios(t_exercicio vetor_exercicios[], int numero_exercic
     } else {
         ler_entre_2_opcoes(escolha, "Escolha se quer apresentar todas as fichas ou uma em especifico:","Todas","Especifica");
         if (strcmp(escolha,"Especifica")  == 0) {
-            numero_exercicio_procurar = ler_numero_inteiro("\nInsira o numero do exercicio a procurar (este deve estar compreendido entre 0 e 10)",0,MAXIMO_EXE);
-            numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha do exercicio a procurar (este deve estar compreendido entre 0 e 10)",0,MAXIMO_FICHAS);
+            numero_exercicio_procurar = ler_numero_inteiro("\nInsira o numero do exercicio a procurar (este deve estar compreendido entre 1 e 10)",1,MAXIMO_EXE);
+            numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha do exercicio a procurar (este deve estar compreendido entre 1 e 10)",1,MAXIMO_FICHAS);
             indice = procurar_exercicio(vetor_exercicios, numero_exercicios, numero_exercicio_procurar, vetor_fichas, numero_fichas, numero_ficha_procurar);
             if (indice != -1) {
                 print_detalhes_exercicio(vetor_exercicios, indice);
@@ -713,20 +792,7 @@ void print_detalhes_exercicio(t_exercicio vetor_exercicios[], int indice) {
 
 
 
-
-
-
 /*
-   old bs 
-      |   
-     \/   
-*/
-
-
-
-/*
-
-
 //inserir no fichero binario
 void gravar_ficheiro_binario(t_aluno vetor_estudantes[], int numero_alunos) {
     FILE *file_alunos = fopen(FILE_PATH_ESTUDANTE, "wb");
@@ -758,20 +824,6 @@ int ler_ficheiro_binario(t_aluno vetor_estudantes[]) {
     return numero_estudantes;
 }
 
-//alterar a nota final do estudante
-void alterar_nota_final_estudante(t_aluno vetor_estudantes[], int numero_alunos) {
-    int numero_aluno_procurar = 0, flag_estudante_procurado = 0;
-    
-    numero_aluno_procurar = ler_numero_inteiro("\nInsira o numero do estudante (deve estar compreendido entre 2230001 e 2249999)",2230001,2249999); //pede e devolve o numero de aluno
-    flag_estudante_procurado = procurar_estudante(vetor_estudantes,numero_alunos, numero_aluno_procurar); //manda para a função
-
-    if (flag_estudante_procurado != -1) {
-        printf("A nota atual do aluno é: %d\n",vetor_estudantes[flag_estudante_procurado].nota_final);
-        vetor_estudantes[flag_estudante_procurado].nota_final = ler_numero_inteiro("\nInsira a nova final (min 0 max 20) do estudante", 0, 20);
-    }else{
-        printf("\nO aluno nao foi encontrado");     
-    }
-}
 
 // Estatísticas das avaliações - Wilson
 void mostrar_estatisticas(t_aluno vetor_estudantes[], int numero_alunos) {
