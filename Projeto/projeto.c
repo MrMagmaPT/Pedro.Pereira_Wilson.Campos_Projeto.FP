@@ -441,9 +441,9 @@ int menu_opcoes_estatisticas(void){
 // \/                     \/
 
 
-//  funções genericas
-//        |
-//       \/
+//    funções genericas
+//          |
+//         \/
 
 //ler ler entre 2 opcoes dadas pelo programador e atibuir ao vetor enviado
 void ler_entre_2_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[]) {
@@ -844,5 +844,14 @@ void mostrar_estatisticas(t_aluno vetor_estudantes[], int numero_alunos) {
     media = soma/indice;
     printf("A nota mais alta foi: %d - Que foi do aluno: %s\n", nota_mais_alta, estudante_melhor_nota);
     printf("A nota mais baixa foi: %d - Que foi do aluno: %s\n",nota_mais_baixa, estudante_pior_nota);
+ 
     printf("A media de todas as notas foi: %.2f\n",media);
-}*/
+
+/*
+ █████╗  ██████╗ █████╗ ██████╗ ███████╗██╗    ██╗
+██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔════╝██║    ██║
+███████║██║     ███████║██████╔╝█████╗  ██║    ██║
+██╔══██║██║     ██╔══██║██╔══██╗██╔══╝  ██║    ╚═╝
+██║  ██║╚██████╗██║  ██║██████╔╝███████╗██║    ██╗
+╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝    ╚═╝
+*/
