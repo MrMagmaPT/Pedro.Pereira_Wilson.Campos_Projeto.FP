@@ -120,6 +120,7 @@ int ler_numero_inteiro(char[],int, int);
 int confirmar_Sim_ou_Nao(char[], char[], char[]);
 int verificar_limite_exercicios_ficha(t_exercicio vetor_exercicios[], int numero_exercicios, int id_ficha_procurar, t_ficha vetor_fichas[], int numero_fichas);
 void le_string_para_vetor(char vetor[], char mensagem[]);
+t_data ler_data(t_data data);
 
 //mostrar
 void mostrar_dados_estudante(t_estudante vetor_estudantes[],int numero_alunos);
@@ -129,7 +130,6 @@ void mostrar_dados_exercicios(t_exercicio vetor_exercicios[],int numero_exercici
 void print_detalhes_estudante(t_estudante vetor_estudantes[], int indice);
 void print_detalhes_ficha(t_ficha vetor_fichas[], int indice);
 void print_detalhes_exercicio(t_exercicio vetor_exercicios[], int indice);
-
 
 //função main
 int main() {
@@ -440,11 +440,19 @@ int menu_opcoes_estatisticas(void){
 //  |                      |
 // \/                     \/
 
-
 //    funções genericas
 //          |
 //         \/
 
+//atribui a data aos valores enviados aos arrays
+t_data ler_data(t_data data){
+    SYSTEMTIME t; // Declara a strutura SYSTEMTIME mas com o nome t
+    GetLocalTime(&t); //recebe o tempo local do sistema
+    data.dia = t.wDay; //data - dia
+    data.mes = t.wMonth; //data - mes
+    data.ano = t.wYear; //data - ano
+    return data;
+}
 //ler ler entre 2 opcoes dadas pelo programador e atibuir ao vetor enviado
 void ler_entre_2_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[]) {
     int opcao = 0;
@@ -500,7 +508,7 @@ void le_string_para_vetor(char vetor[], char mensagem[]) {
 int ler_numero_inteiro(char texto[],int min, int max){
     int num = 0;
     do{
-        printf("%s: ",texto);
+        printf("%s: ",texto, min-1);
         scanf("%d",&num);
         fflush(stdin);
         if (num < min || num > max){
@@ -508,6 +516,7 @@ int ler_numero_inteiro(char texto[],int min, int max){
             printf("O valor introduzido nao segue as regras indicadas\n(prima qualquer tecla para continuar)\n");
             getch();
         }
+        fflush(stdin);
     } while (num < min || num > max);
     return num;
 }
@@ -541,78 +550,81 @@ int confirmar_Sim_ou_Nao(char texto[], char texto_cancelado[], char texto_confir
 
 //ler dados estudantes
 int ler_dados_estudante(t_estudante vetor_estudantes[],int numero_alunos) {
-    int  contador = numero_alunos + 1, numero_aluno_procurar = 0, flag_estudante_procurado = 0;
+    int  contador = numero_alunos + 1, numero_aluno_procurar = 0, flag_estudante_procurado = 0, min_aluno = 2230001,max_aluno = 2249999;
     char e_email_estudante_completo[TAMANHO_STRING];
     vetor_estudantes[numero_alunos].id = contador; //id
     do { //numero do estudante
-        numero_aluno_procurar = ler_numero_inteiro("\nInsira o numero do estudante (deve estar compreendido entre 2230001 e 2249999)",2230001,2249999); //pede e devolve o numero de aluno
+        numero_aluno_procurar = ler_numero_inteiro("\nInsira o numero do estudante (deve estar compreendido entre 2230001 e 2249999)",min_aluno,max_aluno); //pede e devolve o numero de aluno
         flag_estudante_procurado = procurar_estudante(vetor_estudantes,numero_alunos, numero_aluno_procurar); //manda para a função
         if (flag_estudante_procurado == -1) {
             vetor_estudantes[numero_alunos].numero = numero_aluno_procurar; //guarda o valor inserido no array se não existir
         } else {
             system("cls");
             printf("\nO aluno com o numero indicado ja se encontra registado escolha outro numero\n"); //mensagem de erro
-        }
+        }  
     } while (flag_estudante_procurado != -1);
     le_string_para_vetor(vetor_estudantes[numero_alunos].nome, "Insira o nome do estudante"); //guarda o nome do estudantenome do estudante
     sprintf(e_email_estudante_completo, "%d@my.ipleiria.pt", numero_aluno_procurar); //atrbui o resultado de um suposto printf a um vetor de caracteres (desta maneira podemos utilizar variveis de ints em situações com chars)
-    strcpy(vetor_estudantes[numero_alunos].e_mail, e_email_estudante_completo); // copia o valor dentro do vetor de caracteres com o e-mail completo para o e_mail do estudante dentro do vetor (podia ter feito os dois juntos mas para ficar mais legivel separei contudo uma verção mais compacta destas duas linhas é possivel e essa mesma verção não utiliza o vetor de caracteres extra)
+    strcpy(vetor_estudantes[numero_alunos].e_mail, e_email_estudante_completo); // copia o valor dentro do vetor de caracteres com o e-mail completo para o e_mail do estudante dentro do vetor (podia ter feito os dois juntos mas para ficar mais legivel separei contudo uma verção mais compacta destas duas linhas é possivel e essa mesma verção não utiliza o vetor de caracteres extra) 
     return contador;
 }
 
 //ler dados fichas 
 int ler_dados_ficha(t_ficha vetor_fichas[],int numero_fichas) {
     int contador = numero_fichas + 1, numero_ficha_procurar = 0, flag_ficha_procurado = 0;
-    char nome_ficha[TAMANHO_STRING];  // TEMP - Até resposta do stor
-    SYSTEMTIME t; // Declara a strutura SYSTEMTIME mas com o nome t
-    GetLocalTime(&t); //recebe o tempo local do sistema
+    char nome_ficha[TAMANHO_STRING]; 
     vetor_fichas[numero_fichas].id = contador; //id
     do { //nome da ficha
         numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha (este deve estar compreendido entre 1 e 10)",1,MAXIMO_FICHAS); //pede e devolve o numero da ficha
         flag_ficha_procurado = procurar_ficha(vetor_fichas,numero_fichas, numero_ficha_procurar); //manda para a função
         if (flag_ficha_procurado == -1) {
-            sprintf(nome_ficha, "Ficha %d", numero_ficha_procurar); // TEMP - Até resposta do stor
-            strcpy(vetor_fichas[numero_fichas].nome, nome_ficha); // TEMP - Até resposta do stor
+            sprintf(nome_ficha, "Ficha %d", numero_ficha_procurar); 
+            strcpy(vetor_fichas[numero_fichas].nome, nome_ficha); 
         } else {
             system("cls");
             printf("\nA Ficha com o numero indicada ja se encontra registada escolha outro numero para a sua ficha\n"); //mensagem de erro
         }
     } while (flag_ficha_procurado != -1);
-    vetor_fichas[numero_fichas].total_exe = ler_numero_inteiro("\nInsira o numero de exercicios da ficha (este deve estar compreendido entre 0 e 10)",1,MAXIMO_EXE);
-    vetor_fichas[numero_fichas].data_publi.dia = t.wDay; //data - dia
-    vetor_fichas[numero_fichas].data_publi.mes = t.wMonth; //data - mes
-    vetor_fichas[numero_fichas].data_publi.ano = t.wYear; //data - ano
+    vetor_fichas[numero_fichas].total_exe = ler_numero_inteiro("\nInsira o numero de exercicios da ficha (este deve estar compreendido entre 1 e 10)",1,MAXIMO_EXE);
+    vetor_fichas[numero_fichas].data_publi = ler_data(vetor_fichas[numero_fichas].data_publi);
     return contador;
 }
 
 //ler dados exercicios
 int ler_dados_exercicios(t_exercicio vetor_exercicios[], int numero_exercicios, t_ficha vetor_fichas[], int numero_fichas) {
-    int contador = numero_exercicios + 1;
-    int numero_ficha_procurar = 0, flag_exercicio_procurado = 0, numero_exercicio_procurar = 0, id_ficha_encontrada = -1;
+    int numero_ficha_procurar = 0, flag_exercicio_procurado = 0, numero_exercicio_procurar = 0, id_ficha_encontrada = -1, limite_atingido = 0, sair = 0, contador = numero_exercicios + 1;
     vetor_exercicios[numero_exercicios].id = contador;
-    do {
+    do {      
         numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha a que este exercicio vai estar ligado (entre 1 e 10)", 1, MAXIMO_FICHAS);
         id_ficha_encontrada = procurar_ficha(vetor_fichas, numero_fichas, numero_ficha_procurar);
         if (id_ficha_encontrada == -1) {
             printf("\nFicha nao encontrada. Insira um numero de ficha valido.\n");
         } else {
-            if (verificar_limite_exercicios_ficha(vetor_exercicios, numero_exercicios, numero_ficha_procurar, vetor_fichas, numero_fichas) == -1) {
-                printf("\nNao e possivel adicionar mais exercicios a esta ficha.\n");
-            } else {
+            limite_atingido = verificar_limite_exercicios_ficha(vetor_exercicios, numero_exercicios, numero_ficha_procurar, vetor_fichas, numero_fichas);
+            if (limite_atingido == 0) { //ainda tem espaço no vetor
                 numero_exercicio_procurar = ler_numero_inteiro("\nInsira o numero do exercicio (entre 1 e 10)", 1, MAXIMO_EXE);
                 flag_exercicio_procurado = procurar_exercicio(vetor_exercicios, numero_exercicios, numero_exercicio_procurar, vetor_fichas, numero_fichas, numero_ficha_procurar);
                 if (flag_exercicio_procurado != -1) {
                     printf("\nJa existe um exercicio com o numero indicado nesta ficha.\n");
-                }
+                } else {
+                    vetor_exercicios[numero_exercicios].id_ficha = id_ficha_encontrada + 1;
+                    le_string_para_vetor(vetor_exercicios[numero_exercicios].nome, "Insira o nome do exercicio");
+                    ler_entre_2_opcoes(vetor_exercicios[numero_exercicios].tipo_solucao,"Insira o tipo de solucao do exercicio", "Algoritmo", "Codigo");
+                    ler_entre_3_opcoes(vetor_exercicios[numero_exercicios].dificuldade,"Insira a dificuldade do exercicio", "Elevada", "Media", "Baixa");
+                }   
             }
         }
-    } while (id_ficha_encontrada == -1 || flag_exercicio_procurado != -1);
-    vetor_exercicios[numero_exercicios].id_ficha = id_ficha_encontrada + 1;
-    le_string_para_vetor(vetor_exercicios[numero_exercicios].nome, "Insira o nome do exercicio");
-    ler_entre_2_opcoes(vetor_exercicios[numero_exercicios].tipo_solucao,"Insira o tipo de solucao do exercicio", "Algoritmo", "Codigo");
-    ler_entre_3_opcoes(vetor_exercicios[numero_exercicios].dificuldade,"Insira a dificuldade do exercicio", "Elevada", "Media", "Baixa");
+        if (id_ficha_encontrada == -1 || flag_exercicio_procurado != -1 || limite_atingido == -1) { //mensagem de erro para inserção por excesso de exercicios
+                sair = confirmar_Sim_ou_Nao("Quer abortar a inserção de dados ? (S/N)","OK! A abortar a inserção de dados","Compreendido, a continuar a inserção de dados!");
+    	}
+    } while (id_ficha_encontrada == -1 || flag_exercicio_procurado != -1 || limite_atingido == -1);
+    if (sair == 1) {
+        contador = contador - 1;
+    }
     return contador;
 }
+
+
 
 //  procura de dados
 //         |
@@ -634,31 +646,35 @@ int procurar_ficha(t_ficha vetor_fichas[], int numero_fichas,int numero_fichas_p
     int indice = 0, indice_ficha = -1;
     char nome_ficha[TAMANHO_STRING]; //Mesmo metodo utilizado anteriormente no codigo
     sprintf(nome_ficha, "Ficha %d", numero_fichas_procurar); //Mesmo metodo utilizado anteriormente no codigo
+    fflush(stdin);
     for (indice = 0; indice < numero_fichas; indice++){
         if (strcmp(vetor_fichas[indice].nome, nome_ficha) == 0) { // Mesmo metodo utilizado anteriormente no codigo
             indice_ficha = indice;
-            
         }
     }
+    
     return indice_ficha;
 }
 
 //procurar exericio
 int procurar_exercicio(t_exercicio vetor_exercicios[],int numero_exercicios,int numero_exercicio_procurar,t_ficha vetor_fichas[],int numero_fichas,int id_ficha_procurar){
     int indice_numero_fichas,indice_numero_exericios,indice_ficha=-1,indice_exercicio=-1;
-    indice_ficha = procurar_ficha(vetor_fichas, numero_fichas, numero_exercicio_procurar);
+    indice_ficha = procurar_ficha(vetor_fichas, numero_fichas, id_ficha_procurar);
     if(indice_ficha == -1){
-        system("cls");
-        printf("\nNao foram encontradas fichas com o numero indicado,\ninsira uma ficha ja previamente registada\n");
+        // system("cls");
+        indice_exercicio = -2;
+        //Se der return de -2 ele vai dar return desse -2 e vai indicar que este exercicio não existe
     } else {
+        //O vetor percorre o array de exercicios e vai verificar se existe a ficha 
         for(indice_numero_exericios=0;indice_numero_exericios<numero_exercicios;indice_numero_exericios++){
             if(vetor_exercicios[indice_numero_exericios].id==numero_exercicio_procurar && vetor_exercicios[indice_numero_exericios].id_ficha==id_ficha_procurar){
                 indice_exercicio=indice_numero_exericios;
-            } else {
-                indice_exercicio = -2;
             }
+                
         }
     }
+    // -1 para quando o exercicio não existe na ficha
+    // -2 para quando não existe ficha
     return indice_exercicio;
 }
 
@@ -668,22 +684,18 @@ int procurar_exercicio(t_exercicio vetor_exercicios[],int numero_exercicios,int 
 
 //verificara o limie de exercicios por ficha
 int verificar_limite_exercicios_ficha(t_exercicio vetor_exercicios[], int numero_exercicios, int id_ficha_procurar, t_ficha vetor_fichas[], int numero_fichas) {
-    int indice_ficha = procurar_ficha(vetor_fichas, numero_fichas, id_ficha_procurar);
-    if (indice_ficha == -1) {
-        printf("\nA ficha com o ID indicado nao existe.\n");
-        return -1;
-    }
-    int total_exercicios_ficha = 0;
-    for (int i = 0; i < numero_exercicios; i++) {
-        if (vetor_exercicios[i].id_ficha == indice_ficha) {
+    int flag = 0,total_exercicios_ficha = 0, index = 0;
+    id_ficha_procurar -=1; 
+    for (index = 0; index <= numero_exercicios; index++) {
+        if (vetor_exercicios[index].id_ficha == id_ficha_procurar); {
             total_exercicios_ficha++;
         }
     }
-    if (total_exercicios_ficha >= vetor_fichas[indice_ficha].total_exe) {
-        printf("\nJa foi atingido o limite maximo de %d exercicios para esta ficha.\n", vetor_fichas[indice_ficha].total_exe);
-        return -1;
+    if (total_exercicios_ficha > vetor_fichas[id_ficha_procurar].total_exe) {
+        printf("\nJa foi atingido o limite maximo de %d exercicios para esta ficha.\n", vetor_fichas[id_ficha_procurar].total_exe);
+        flag = -1;
     }
-    return 0;
+    return flag;
 }
 
 // apresentação de dados    
@@ -699,7 +711,7 @@ void mostrar_dados_estudante(t_estudante vetor_estudantes[],int numero_alunos){
         getch();
         system("cls");
     } else {
-        ler_entre_2_opcoes(escolha, "Escolha se quer apresentar todos os estudantes ou um em especifico: ","Todos","Especifico");
+        ler_entre_2_opcoes(escolha, "Escolha se quer apresentar todos os estudantes ou um em especifico","Todos","Especifico");
         if (strcmp(escolha,"Especifico")  == 0) {
             numero_aluno_procurar = ler_numero_inteiro("\nInsira o numero do estudante a procurar (deve estar compreendido entre 2230001 e 2249999)",2230001,2249999);
             indice = procurar_estudante(vetor_estudantes, numero_alunos,numero_aluno_procurar);
@@ -710,6 +722,7 @@ void mostrar_dados_estudante(t_estudante vetor_estudantes[],int numero_alunos){
             }
         } else {
             for (indice = 0; indice < numero_alunos; indice++){
+                system("cls");
                 print_detalhes_estudante(vetor_estudantes, indice);
             } 
         }
@@ -731,7 +744,7 @@ void mostrar_dados_ficha(t_ficha vetor_ficha[],int numero_ficha){
         getch();
         system("cls");
     } else {
-        ler_entre_2_opcoes(escolha, "Escolha se quer apresentar todas as fichas ou uma em especifico:","Todas","Especifica");
+        ler_entre_2_opcoes(escolha, "Escolha se quer apresentar todas as fichas ou uma em especifico","Todas","Especifica");
         if (strcmp(escolha,"Especifica")  == 0) {
             numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha a procurar (este deve estar compreendido entre 1 e 10)",1,MAXIMO_EXE);
             indice = procurar_ficha(vetor_ficha, numero_ficha, numero_ficha_procurar);
@@ -763,7 +776,7 @@ void mostrar_dados_exercicios(t_exercicio vetor_exercicios[], int numero_exercic
         getch();
         system("cls");
     } else {
-        ler_entre_2_opcoes(escolha, "Escolha se quer apresentar todas as fichas ou uma em especifico:","Todas","Especifica");
+        ler_entre_2_opcoes(escolha, "Escolha se quer apresentar todas as fichas ou uma em especifico","Todas","Especifica");
         if (strcmp(escolha,"Especifica")  == 0) {
             numero_exercicio_procurar = ler_numero_inteiro("\nInsira o numero do exercicio a procurar (este deve estar compreendido entre 1 e 10)",1,MAXIMO_EXE);
             numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha do exercicio a procurar (este deve estar compreendido entre 1 e 10)",1,MAXIMO_FICHAS);
