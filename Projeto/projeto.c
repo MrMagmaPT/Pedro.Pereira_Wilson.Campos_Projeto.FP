@@ -36,6 +36,18 @@
 #define FILE_PATH_EXERCICIO "SecFiles/EXERCICIOS.dat"
 #define FILE_PATH_SUBMISSOES "SecFiles/SUBMISSOES.dat"
 
+//debug defines
+#define RED   "\x1B[31m"
+#define GRN   "\x1B[32m"
+#define YEL   "\x1B[33m"
+#define BLU   "\x1B[34m"
+#define MAG   "\x1B[35m"
+#define CYN   "\x1B[36m"
+#define WHT   "\x1B[37m"
+#define RESET "\x1B[0m"
+
+
+
 //structs
 typedef struct 
 {
@@ -85,8 +97,12 @@ typedef struct
 //  antigos 
 //    |
 //   \/
-void gravar_ficheiro_binario(t_estudante vetor_estudantes[],int numero_alunos);
-int ler_ficheiro_binario(t_estudante vetor_estudantes[]);
+void gravar_ficheiro_binario(t_estudante vetor_estudantes[], t_ficha vetor_fichas[], t_exercicio vetor_exercicios[],t_submissao vetor_submissoes[],int numero_alunos, int numero_fichas, int numero_exercicios, int numero_submissoes);
+
+int ler_ficheiro_binario_estudantes(t_estudante vetor_estudantes[]);
+int ler_ficheiro_binario_fichas(t_ficha vetor_fichas[]);
+int ler_ficheiro_binario_exercicios(t_exercicio vetor_exercicios[]);
+int ler_ficheiro_binario_submissoes(t_submissao vetor_submissoes[]);
 
 void mostrar_estatisticas(t_estudante vetor_estudantes[], int numero_alunos);
 
@@ -111,20 +127,17 @@ int procurar_submissao(t_submissao vetor_submissoes[], int numero_submissoes ,in
 //leitura de dados
 int ler_dados_estudante(t_estudante vetor_estudantes[],int numero_alunos);
 int ler_dados_ficha(t_ficha vetor_fichas[],int numero_fichas);
-int ler_dados_exercicios(t_exercicio vetor_exercicios[],int numero_exercicios,t_ficha vetor_fichas[],int numero_fichas);
-int ler_submissao(t_submissao vetor_submissoes[], int numero_submissoes, 
-                    t_estudante vetor_estudantes[], int numero_alunos, t_ficha vetor_fichas[], 
-                    int numero_fichas, t_exercicio vetor_exercicios[], int numero_exercicios);
+int ler_dados_exercicios(t_exercicio vetor_exercicios[],int numero_exercicios,t_ficha vetor_fichas[],int numero_fichas); //BRUH
+int ler_submissao(t_submissao vetor_submissoes[], int numero_submissoes, t_estudante vetor_estudantes[], int numero_alunos, t_ficha vetor_fichas[], int numero_fichas, t_exercicio vetor_exercicios[], int numero_exercicios);
 //Guardar dados
-void guardar_dados_submissao(t_submissao vetor_submissoes[], int numero_submissoes, int contador, int id_estudante, 
-                    int id_ficha, int id_exercicio, t_data data_entrega_submicao);
-
+void guardar_dados_submissao(t_submissao vetor_submissoes[], int numero_submissoes, int contador, int id_estudante, int id_ficha, int id_exercicio, t_data data_entrega_submicao);
+//funções de verificação
+int verifica_exercicios_quantidade(t_exercicio vetor_exercicios[], int numero_exercicios, int id_ficha_procurar);
 //funções genéricas
 void ler_entre_2_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[]);
 void ler_entre_3_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[],char opcao3[]);
 int ler_numero_inteiro(char[],int, int);
 int confirmar_Sim_ou_Nao(char[], char[], char[]);
-int verificar_limite_exercicios_ficha(t_exercicio vetor_exercicios[], int numero_exercicios, int id_ficha_procurar, t_ficha vetor_fichas[], int numero_fichas);
 void le_string_para_vetor(char vetor[], char mensagem[]);
 t_data ler_data(t_data data);
 
@@ -287,9 +300,14 @@ int main() {
             break;
         case 6: //gavar dados ficheiro
             system("cls");
+            gravar_ficheiro_binario(vetor_alunos, vetor_fichas,vetor_exercicios, vetor_submissoes, numero_alunos, numero_fichas, numero_exercicios, numero_submissoes);
             break;
         case 7: //ler dados ficheiro
             system("cls");
+            numero_alunos = ler_ficheiro_binario_estudantes(vetor_alunos);
+            numero_fichas = ler_ficheiro_binario_fichas(vetor_fichas);
+            numero_exercicios = ler_ficheiro_binario_exercicios(vetor_exercicios);
+            numero_submissoes =ler_ficheiro_binario_submissoes(vetor_submissoes);
             break;
         case 0: //sair
             system("cls");
@@ -603,36 +621,30 @@ int ler_dados_ficha(t_ficha vetor_fichas[],int numero_fichas) {
 
 //ler dados exercicios
 int ler_dados_exercicios(t_exercicio vetor_exercicios[], int numero_exercicios, t_ficha vetor_fichas[], int numero_fichas) {
-    int numero_ficha_procurar = 0, flag_exercicio_procurado = 0, numero_exercicio_procurar = 0, id_ficha_encontrada = -1, limite_atingido = 0, sair = 0, contador = numero_exercicios + 1;
-    vetor_exercicios[numero_exercicios].id = contador;
-    do {      
-        numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha a que este exercicio vai estar ligado (entre 1 e 10)", 1, MAXIMO_FICHAS);
-        id_ficha_encontrada = procurar_ficha(vetor_fichas, numero_fichas, numero_ficha_procurar);
-        if (id_ficha_encontrada == -1) {
-            printf("\nFicha nao encontrada. Insira um numero de ficha valido.\n");
-        } else {
-            limite_atingido = verificar_limite_exercicios_ficha(vetor_exercicios, numero_exercicios, numero_ficha_procurar, vetor_fichas, numero_fichas);
-            if (limite_atingido == 0) { //ainda tem espaço no vetor
-                numero_exercicio_procurar = contador;
-                flag_exercicio_procurado = procurar_exercicio(vetor_exercicios, numero_exercicios, numero_exercicio_procurar, vetor_fichas, numero_fichas, numero_ficha_procurar);
-                if (flag_exercicio_procurado != -1) {
-                    printf("\nJa existe um exercicio com o numero indicado nesta ficha.\n");
-                } else {
-                    vetor_exercicios[numero_exercicios].id_ficha = id_ficha_encontrada + 1;
-                    le_string_para_vetor(vetor_exercicios[numero_exercicios].nome, "Insira o nome do exercicio");
-                    ler_entre_2_opcoes(vetor_exercicios[numero_exercicios].tipo_solucao,"Insira o tipo de solucao do exercicio", "Algoritmo", "Codigo");
-                    ler_entre_3_opcoes(vetor_exercicios[numero_exercicios].dificuldade,"Insira a dificuldade do exercicio", "Elevada", "Media", "Baixa");
-                }   
+    int numero_da_ficha = 0, indice_ficha = 0,flag_limite = 0, total_exercicios_ficha = 0;
+    numero_da_ficha = ler_numero_inteiro("Insira o numero da ficha a que este exercicio vai estar ligado (entre 1 e 10)", 1, MAXIMO_FICHAS);
+    indice_ficha = procurar_ficha(vetor_fichas, numero_fichas, numero_da_ficha);
+    if (indice_ficha != -1) { //A ficha existe
+        for (int index = 0; index <= numero_exercicios; index++) {
+            if (vetor_exercicios[index].id_ficha == indice_ficha+1) {
+                total_exercicios_ficha++;
             }
         }
-        if (id_ficha_encontrada == -1 || flag_exercicio_procurado != -1 || limite_atingido == -1) { //mensagem de erro para inserção por excesso de exercicios
-                sair = confirmar_Sim_ou_Nao("Quer abortar a insercao de dados ? (S/N)","Compreendido, a continuar a insercao de dados!\n","OK! A abortar a insercao de dados\n");
+        if (total_exercicios_ficha >= vetor_fichas[indice_ficha].total_exe) {
+            printf("\nJa foi atingido o limite maximo de %d exercicios para esta ficha.\n", vetor_fichas[indice_ficha].total_exe);
+            flag_limite = -1;
+        } else { //A ficha tem espaço para meter exercicios
+            vetor_exercicios[numero_exercicios].id = numero_exercicios + 1;
+            vetor_exercicios[numero_exercicios].id_ficha = indice_ficha+1;
+            le_string_para_vetor(vetor_exercicios[numero_exercicios].nome, "Insira o nome do exercicio");
+            ler_entre_3_opcoes(vetor_exercicios[numero_exercicios].dificuldade, "Insira a dificuldade do exercicio", "Elevada", "Media", "Baixa");
+            ler_entre_2_opcoes(vetor_exercicios[numero_exercicios].tipo_solucao, "Insira o tipo de solucao do exercicio", "Algoritmo", "Codigo");
+            numero_exercicios = numero_exercicios + 1;
         }
-    } while (id_ficha_encontrada == -1 && sair == 0 || flag_exercicio_procurado != -1 && sair == 0 || limite_atingido == -1 && sair == 0);
-    if (sair == 1) {
-        contador = contador - 1;
+    } else {
+        printf("\nFicha nao encontrada. Insira um numero de ficha valido.\n");
     }
-    return contador;
+    return numero_exercicios;
 }
 
 //ler dados submissões
@@ -651,17 +663,16 @@ int ler_submissao(t_submissao vetor_submissoes[], int numero_submissoes, t_estud
                     flag_procurar_exercicio = procurar_exercicio(vetor_exercicios, numero_exercicios, id_exercicio, vetor_fichas, numero_fichas, id_ficha);
                     if (flag_procurar_exercicio != -1){
                         data_entrega_submicao = ler_data(vetor_submissoes[numero_submissoes].data_submicao); 
+                        guardar_dados_submissao(vetor_submissoes, numero_submissoes, contador, id_estudante, id_ficha, id_exercicio, data_entrega_submicao);
                     }
                 }
             }
             if(flag_procurar_estudante == -1 ||flag_procurar_ficha == -1 || flag_procurar_exercicio == -1) {
                 mostrar_erros_submissao(flag_procurar_estudante, flag_procurar_ficha, flag_procurar_exercicio);
                 sair = confirmar_Sim_ou_Nao("Quer abortar a insercao de dados ? (S/N)","Compreendido, a continuar a insercao de dados!\n","OK! A abortar a insercao de dados\n");
+                    contador = contador -1;
             }
         } while (flag_procurar_estudante == -1  && sair == 0 ||flag_procurar_ficha == -1 && sair == 0 || flag_procurar_exercicio == -1 && sair == 0);
-        if (sair == 0) {
-            guardar_dados_submissao(vetor_submissoes, numero_submissoes, contador, id_estudante, id_ficha, id_exercicio, data_entrega_submicao);
-        }
     } else {
         printf("\nLimite de submissoes atingido!!!!\n");
         contador = contador -1;
@@ -673,9 +684,10 @@ void guardar_dados_submissao(t_submissao vetor_submissoes[], int numero_submisso
     vetor_submissoes[numero_submissoes].id_estudante = id_estudante;
     vetor_submissoes[numero_submissoes].id_ficha = id_ficha;
     vetor_submissoes[numero_submissoes].id_exe = id_exercicio;
-    vetor_submissoes[numero_submissoes].nota = ler_numero_inteiro("Insira o numero de linhas da solução do exercicio", 1,MAXIMO_SUBMISSOES);
-    vetor_submissoes[numero_submissoes].n_linhas_solucao = ler_numero_inteiro("Insira a nota que o estudante obteve! (entre 0 e 100)",NOTA_MIN,NOTA_MAX);;
+    vetor_submissoes[numero_submissoes].nota = ler_numero_inteiro("Insira a nota que o estudante obteve! (entre 0 e 100)",NOTA_MIN,NOTA_MAX);
+    vetor_submissoes[numero_submissoes].n_linhas_solucao= ler_numero_inteiro("Insira o numero de linhas da solução do exercicio", 1,MAXIMO_SUBMISSOES);
     vetor_submissoes[numero_submissoes].data_submicao = data_entrega_submicao;
+
 }
 //  procura de dados
 //         |
@@ -703,7 +715,6 @@ int procurar_ficha(t_ficha vetor_fichas[], int numero_fichas,int numero_fichas_p
             indice_ficha = indice;
         }
     }
-    
     return indice_ficha;
 }
 
@@ -744,20 +755,15 @@ int procurar_submissao(t_submissao vetor_submissoes[], int numero_submissoes ,in
 //       |
 //      \/
 
-//verificara o limie de exercicios por ficha
-int verificar_limite_exercicios_ficha(t_exercicio vetor_exercicios[], int numero_exercicios, int id_ficha_procurar, t_ficha vetor_fichas[], int numero_fichas) {
-    int flag = 0,total_exercicios_ficha = 0, index = 0;
-    id_ficha_procurar -=1; 
-    for (index = 0; index <= numero_exercicios; index++) {
-        if (vetor_exercicios[index].id_ficha == id_ficha_procurar); {
-            total_exercicios_ficha++;
+//verifica a quantidade de exercicios
+int verifica_exercicios_quantidade(t_exercicio vetor_exercicios[], int numero_exercicios, int id_ficha_procurar) {
+    int contador = 0;
+    for (int i = 0; i < numero_exercicios; i++) {
+        if (vetor_exercicios[i].id_ficha == id_ficha_procurar) {
+            contador++;
         }
     }
-    if (total_exercicios_ficha > vetor_fichas[id_ficha_procurar].total_exe) {
-        printf("\nJa foi atingido o limite maximo de %d exercicios para esta ficha.\n", vetor_fichas[id_ficha_procurar].total_exe);
-        flag = -1;
-    }
-    return flag;
+    return contador; //devolve a quantidade de exercicios com o ID da ficha registados para funfar bem
 }
 
 // apresentação de dados    
@@ -830,27 +836,28 @@ void print_detalhes_ficha(t_ficha vetor_fichas[], int indice) {
 
 //mostrar o vetor exercicios
 void mostrar_dados_exercicios(t_exercicio vetor_exercicios[], int numero_exercicios, t_ficha vetor_fichas[], int numero_fichas) {
-    int indice = 0,numero_exercicio_procurar = 0, numero_ficha_procurar = 0;
+    int indice = 0, numero_exercicio_procurar = 0, numero_ficha_procurar = 0;
     char escolha[TAMANHO_STRING];
-    if (vetor_exercicios[0].id == 0) {
+    if (numero_exercicios == 0) {
         printf("Nao existem dados a apresentar, carregue os dados do ficheiro ou insira dados novos!!!\nPrima qualquer tecla para continuar...");
         getch();
         system("cls");
-    } else {
-        ler_entre_2_opcoes(escolha, "Escolha se quer apresentar todas as fichas ou uma em especifico","Todas","Especifica");
-        if (strcmp(escolha,"Especifica")  == 0) {
-            numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha do exercicio a procurar (este deve estar compreendido entre 1 e 10)",1,MAXIMO_FICHAS);
-            numero_exercicio_procurar = ler_numero_inteiro("\nInsira o ID do exercicio (valor atribuido automaticamente) (este deve estar compreendido entre 1 e 10)",1,MAXIMO_EXE);
-            indice = procurar_exercicio(vetor_exercicios, numero_exercicios, numero_exercicio_procurar, vetor_fichas, numero_fichas, numero_ficha_procurar);
-            if (indice != -1) {
-                print_detalhes_exercicio(vetor_exercicios, indice);
-            } else {
-                printf("O numero inserido nao foi encontrado nos registos, carregue os dados dos ficheiros ou insira uma ou mais fichas!");
-            }
+        return;
+    }
+    ler_entre_2_opcoes(escolha, "Escolha se quer apresentar todas as fichas ou uma em especifico", "Todas", "Especifica");
+    if (strcmp(escolha, "Especifica") == 0) {
+        numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha do exercicio a procurar (este deve estar compreendido entre 1 e 10)", 1, MAXIMO_FICHAS);
+        numero_exercicio_procurar = ler_numero_inteiro("\nInsira o ID do exercicio (valor atribuido automaticamente) (este deve estar compreendido entre 1 e 10)", 1, MAXIMO_EXE);
+        indice = procurar_exercicio(vetor_exercicios, numero_exercicios, numero_exercicio_procurar, vetor_fichas, numero_fichas, numero_ficha_procurar);
+        
+        if (indice != -1) {
+            print_detalhes_exercicio(vetor_exercicios, indice);
         } else {
-            for (indice = 0; indice < numero_exercicios; indice++){
-                print_detalhes_exercicio(vetor_exercicios, indice);
-            } 
+            printf("O numero inserido nao foi encontrado nos registos, carregue os dados dos ficheiros ou insira uma ou mais fichas!\n");
+        }
+    } else {
+        for (indice = 0; indice < numero_exercicios; indice++) {
+            print_detalhes_exercicio(vetor_exercicios, indice);
         }
     }
 }
@@ -866,6 +873,8 @@ void print_detalhes_exercicio(t_exercicio vetor_exercicios[], int indice) {
 void mostrar_dados_submissoes(t_submissao vetor_submissoes[],int numero_submissoes){
     int indice = 0, numero_submissoes_procurar = 0;
     char escolha[TAMANHO_STRING];
+
+
     if (vetor_submissoes[0].id == 0) {
         printf("Nao existem dados a apresentar, carregue os dados do ficheiro ou insira dados novos!!!\nPrima qualquer tecla para continuar...");
         getch();
@@ -887,7 +896,6 @@ void mostrar_dados_submissoes(t_submissao vetor_submissoes[],int numero_submisso
         }
     }
 }
-//print detalhes submissao
 void print_detalhes_submissao(t_submissao vetor_submissoes[],int indice){   
     printf("\nID da Submissao: %d\n", vetor_submissoes[indice].id);
     printf("ID do Estudante: %d\n", vetor_submissoes[indice].id_estudante);
@@ -897,7 +905,6 @@ void print_detalhes_submissao(t_submissao vetor_submissoes[],int indice){
     printf("Numero de Linhas da Solucao: %d\n", vetor_submissoes[indice].n_linhas_solucao);
     printf("Data de Submissao: %d\\%d\\%d\n", vetor_submissoes[indice].data_submicao.dia, vetor_submissoes[indice].data_submicao.mes, vetor_submissoes[indice].data_submicao.ano);
 }
-//mostrar erros do vetor submissoes
 void mostrar_erros_submissao(int flag_procurar_estudante, int flag_procurar_ficha,  int flag_procurar_exercicio){
     if (flag_procurar_estudante == -1) {
         printf("\nO estudante nao foi encontrado nos registos, por favor insira um numero de estudante valido!\n");
@@ -910,10 +917,92 @@ void mostrar_erros_submissao(int flag_procurar_estudante, int flag_procurar_fich
     }
 }
 
+//inserir no fichero binario todos os vetores
+void gravar_ficheiro_binario(t_estudante vetor_estudantes[], t_ficha vetor_fichas[], t_exercicio vetor_exercicios[],t_submissao vetor_submissoes[],int numero_alunos, int numero_fichas, int numero_exercicios, int numero_submissoes) {
+    FILE *file_alunos = fopen(FILE_PATH_ESTUDANTE, "wb");
+    FILE *file_fichas = fopen(FILE_PATH_FICHA, "wb");
+    FILE *file_exercicio = fopen(FILE_PATH_EXERCICIO, "wb");
+    FILE *file_submissoes = fopen(FILE_PATH_SUBMISSOES, "wb");
+    
+    if (file_alunos == NULL || file_fichas == NULL || file_exercicio == NULL || file_submissoes == NULL) {
+        printf("ERRO No carregamento de dados!");
+    } else {
+        fwrite(&numero_alunos, sizeof(int), 1, file_alunos); // Escreve a contagem para cada estudante
+        fwrite(vetor_estudantes, sizeof(t_estudante), numero_alunos, file_alunos); // Escreve o array de estudantes
+        fwrite(&numero_fichas, sizeof(int), 1, file_fichas); // Escreve a contagem para cada ficha
+        fwrite(vetor_fichas, sizeof(t_ficha), numero_fichas, file_fichas); // Escreve o array de fichas
+        fwrite(&numero_exercicios, sizeof(int), 1, file_exercicio); // Escreve a contagem para cada exercicio
+        fwrite(vetor_exercicios, sizeof(t_exercicio), numero_exercicios, file_exercicio); // Escreve o array de exercicios
+        fwrite(&numero_submissoes, sizeof(int), 1, file_submissoes); // Escreve a contagem para cada submissao
+        fwrite(vetor_submissoes, sizeof(t_submissao), numero_submissoes, file_submissoes); // Escreve o array de submissões
+        printf("Dados Gravados com sucesso!!!\n");
+    }
+    fclose(file_alunos);
+    fclose(file_fichas);
+    fclose(file_exercicio);
+    if (file_submissoes != NULL) {
+        fclose(file_submissoes);
+    }
+}
 
+//ler do fitchero binario de cada um dos vetores
+int ler_ficheiro_binario_estudantes(t_estudante vetor_estudantes[]) {
+    int numero_alunos = 0;
+    FILE *file_alunos = fopen(FILE_PATH_ESTUDANTE, "rb");
 
+    if (file_alunos == NULL) {
+        printf("ERRO No gravamento de dados!");
+    } else {
+        fread(&numero_alunos, sizeof(int), 1, file_alunos); // Lê o numero de estudantes
+        fread(vetor_estudantes, sizeof(t_exercicio), numero_alunos, file_alunos); // Lê o array de submissões
+    }
+    fclose(file_alunos);
+    //faz return do numero de estudantes lido
+    return numero_alunos;
+}
+int ler_ficheiro_binario_fichas(t_ficha vetor_fichas[]) {
+    int numero_fichas = 0;
+    FILE *file_fichas = fopen(FILE_PATH_FICHA, "rb");
 
+    if (file_fichas == NULL) {
+        printf("ERRO No gravamento de dados!");
+    } else {
+        fread(&numero_fichas, sizeof(int), 1, file_fichas); // Lê o numero de fichas~
+        fread(vetor_fichas, sizeof(t_ficha), numero_fichas, file_fichas); // Lê o array de submissões
+    }
+    fclose(file_fichas);
+    //retorna o numero de fichas lido
+    return numero_fichas;
+}
+int ler_ficheiro_binario_exercicios(t_exercicio vetor_exercicios[]) {
+    int numero_exercicios = 0;
+    FILE *file_exercicio = fopen(FILE_PATH_EXERCICIO, "rb");
 
+    if (file_exercicio == NULL) {
+        printf("ERRO No gravamento de dados!");
+    } else {
+        fread(&numero_exercicios, sizeof(int), 1, file_exercicio); // Lê o numero de exercicios´
+        fread(vetor_exercicios, sizeof(t_exercicio), numero_exercicios, file_exercicio); // Lê o array de submissões
+    }
+    fclose(file_exercicio);
+    //retorna o numero de exercicios lido
+    return numero_exercicios;
+}
+int ler_ficheiro_binario_submissoes(t_submissao vetor_submissoes[]) {
+    int numero_submissoes = 0;
+    FILE *file_submissoes = fopen(FILE_PATH_SUBMISSOES, "rb");
+
+    if (file_submissoes == NULL) {
+        printf("ERRO No carregamento de dados!");
+    } else {
+        fread(&numero_submissoes, sizeof(int), 1, file_submissoes); // Lê o numero de submissões    
+        fread(vetor_submissoes, sizeof(t_submissao), numero_submissoes, file_submissoes); // Lê o array de submissões
+        printf("Dados carregados com sucesso!!!\n"); 
+    }
+    fclose(file_submissoes);
+    //retorna o numero de submissões lido
+    return numero_submissoes;
+}
 /*
 //inserir no fichero binario
 void gravar_ficheiro_binario(t_aluno vetor_estudantes[], int numero_alunos) {
@@ -939,7 +1028,7 @@ int ler_ficheiro_binario(t_aluno vetor_estudantes[]) {
     } else {
         fread(&numero_estudantes, sizeof(int), 1, file_alunos); // Lê o numero de estudantes
         fread(vetor_estudantes, sizeof(t_aluno), numero_estudantes, file_alunos); // Lê o array de estudantes
-        printf("Dados carregados com sucesso!!!");
+        printf("Dados carregados com sucesso!!!\n");
     }
     fclose(file_alunos);
     //faz return do numero de estudantes lido
