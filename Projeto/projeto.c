@@ -27,13 +27,6 @@
 #include<conio.h>   
 // 7 Permite usar o getch(); (substitui parcialmente o getchar e permite pedir ao utilizador por inputs sem os guardar utilizado recorrentemente como metodo de "parar" um codigo para apresentar informação até ao utilizador escolher continuar, recorrente-mente utilizado no fim de menus de saida para informar o utlizador de saida do programa sem o mesmo fechar de forma abrupta)
 
-#include<stdlib.h>
-#include<stdio.h>
-#include<locale.h>
-#include<ctype.h>
-#include<time.h>
-#include<windows.h>
-#include<conio.h>  
 
 /*
  ________      ________      ________       ________       _________    ________      ________       _________    _______       ________      
@@ -167,7 +160,7 @@ int menu_opcoes_estatisticas(void);
 
 //procurar
 int procurar_estudante(t_estudante vetor_estudantes[], int numero_alunos ,int numero_estudante_procurar);
-int procurar_exercicio(t_exercicio vetor_exercicios[], int numero_exercicios ,int numero_exercicio_procurar, t_ficha vetor_fichas[], int numero_fichas,int numero_fichas_procurar);
+int procurar_exercicio(t_exercicio vetor_exercicios[], int numero_exercicios ,int numero_exercicio_procurar,t_ficha vetor_fichas[], int numero_fichas,int numero_fichas_procurar); 
 int procurar_ficha(t_ficha vetor_fichas[], int numero_fichas ,int numero_ficha_procurar);
 int procurar_submissao(t_submissao vetor_submissoes[], int numero_submissoes ,int numero_submissao_procurar);   
 
@@ -176,7 +169,6 @@ int ler_dados_estudante(t_estudante vetor_estudantes[],int numero_alunos);
 int ler_dados_ficha(t_ficha vetor_fichas[],int numero_fichas);
 int ler_dados_exercicios(t_exercicio vetor_exercicios[],int numero_exercicios,t_ficha vetor_fichas[],int numero_fichas);
 int ler_submissao(t_submissao vetor_submissoes[], int numero_submissoes, t_estudante vetor_estudantes[], int numero_alunos, t_ficha vetor_fichas[], int numero_fichas, t_exercicio vetor_exercicios[], int numero_exercicios);
-
 //guardar dados de submissão
 void guardar_dados_submissao(t_submissao vetor_submissoes[], int numero_submissoes, int contador, int id_estudante, int id_ficha, int id_exercicio, t_data data_entrega_submicao);
 
@@ -186,7 +178,7 @@ int verifica_exercicios_quantidade(t_exercicio vetor_exercicios[], int numero_ex
 //funções genéricas
 void ler_entre_2_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[]);
 void ler_entre_3_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[],char opcao3[]);
-int ler_numero_inteiro(char[],int, int);
+int ler_numero_inteiro(char[],int min, int max);
 int confirmar_Sim_ou_Nao(char[], char[], char[]);
 void le_string_para_vetor(char vetor[], char mensagem[]);
 t_data ler_data(t_data data);
@@ -198,9 +190,9 @@ void mostrar_dados_exercicios(t_exercicio vetor_exercicios[],int numero_exercici
 void mostrar_dados_submissoes(t_submissao vetor_submissoes[],int numero_submissoes);
 
 //calculos
-void calcular_submissoes_por_estudante(t_submissao vetor_submissoes[],int numero_submissoes, t_estudante vetor_estudantes[],int numero_alunos);
-void calcular_media_nota_por_estudante(t_submissao vetor_submissoes[],int numero_submissoes, t_estudante vetor_estudantes[],int numero_alunos);
-void calcular_percentagem_exercicios_resolvidos_por_ficha_por_estudante(t_estudante vetor_estudantes[], int numero_alunos,t_ficha vetor_fichas[],int numero_fichas, t_exercicio vetor_exercicios[],int numero_exercicios,t_submissao vetor_submissoes[],int numero_submissoes);
+void calcular_submissoes_por_estudante(t_submissao vetor_submissoes[],int numero_submissoes,t_estudante vetor_estudantes[],int numero_alunos);
+void calcular_media_nota_por_estudante(t_submissao vetor_submissoes[],int numero_submissoes,t_estudante vetor_estudantes[],int numero_alunos);
+void calcular_percentagem_exercicios_resolvidos_por_ficha_por_estudante(t_estudante vetor_estudantes[], int numero_alunos,t_ficha vetor_fichas[],int numero_fichas,t_exercicio vetor_exercicios[],int numero_exercicios,t_submissao vetor_submissoes[],int numero_submissoes);
 
 //erros
 void mostrar_erros_submissao(int flag_procurar_estudante, int flag_procurar_ficha, int flag_procurar_exercicio);
@@ -245,39 +237,39 @@ int main() {
         switch (escolha)
         {
         case 1: //estudantes
-            system("cls");
+             /*system("cls");*/
             do{
                 escolha = menu_opcoes_estudantes();
                 switch (escolha)
                 {
                 case 1:
-                    system("cls");
+                     /*system("cls");*/
                     numero_alunos = ler_dados_estudante(vetor_alunos, numero_alunos);
                     break;
                 case 2:
-                    system("cls");
+                     /*system("cls");*/
                     mostrar_dados_estudante(vetor_alunos, numero_alunos);
                     break;
                 case 0:
                     sair = confirmar_Sim_ou_Nao("Deseja voltar ao menu principal ?(S\\N)\n","Abortado o Regresso ao Menu Principal\n","A voltar para o Menu Principal (Prima qualquer tecla para voltar)!");
                     break;
                 default:
-                    system("cls");
+                     /*system("cls");*/
                     printf("Erro, Opcao Nao Permitida!");
                     break;
                 }
             } while (sair != 1);
             sair = 0;
-            system("cls");
+             /*system("cls");*/
             break;
         case 2: //fichas
-            system("cls");
+             /*system("cls");*/
             do{
                 escolha = menu_opcoes_fichas();
                 switch (escolha)
                 {
                 case 1:
-                    system("cls");
+                     /*system("cls");*/
                     numero_fichas = ler_dados_ficha(vetor_fichas,numero_fichas);
                     break;
                 case 2:
@@ -287,113 +279,113 @@ int main() {
                     sair = confirmar_Sim_ou_Nao("Deseja voltar ao menu principal ?(S\\N)\n","Abortado o Regresso ao Menu Principal\n","A voltar para o Menu Principal (Prima qualquer tecla para voltar)!");
                     break;
                 default:
-                    system("cls");
+                     /*system("cls");*/
                     printf("Erro, Opcao Nao Permitida!");
                     break;
                 }
             } while (sair != 1);
             sair = 0;
-            system("cls");
+             /*system("cls");*/
             break;
         case 3: //exercicios
-            system("cls");
+             /*system("cls");*/
             do{
                 escolha = menu_opcoes_exercicios();
                 switch (escolha)
                 {
                 case 1:
-                    system("cls");
+                     /*system("cls");*/
                     numero_exercicios = ler_dados_exercicios(vetor_exercicios, numero_exercicios, vetor_fichas, numero_fichas);
                     break;
                 case 2:
-                    system("cls");
+                     /*system("cls");*/
                     mostrar_dados_exercicios(vetor_exercicios, numero_exercicios,vetor_fichas, numero_fichas);
                     break;
                 case 0:
                     sair = confirmar_Sim_ou_Nao("Deseja voltar ao menu principal ?(S\\N)\n","Abortado o Regresso ao Menu Principal\n","A voltar para o Menu Principal (Prima qualquer tecla para voltar)!");
                     break;
                 default:
-                    system("cls");
+                     /*system("cls");*/
                     printf("Erro, Opcao Nao Permitida!");
                     break;
                 }
             } while (sair != 1);
             sair = 0;
-            system("cls");
+             /*system("cls");*/
             break;
         case 4: //submissoes
-            system("cls");
+             /*system("cls");*/
             do{
                 escolha = menu_opcoes_submicoes();
                 switch (escolha)
                 {
                 case 1:
-                    system("cls");
+                     /*system("cls");*/
                     numero_submissoes = ler_submissao(vetor_submissoes, numero_submissoes, vetor_alunos, numero_alunos, vetor_fichas, numero_fichas, vetor_exercicios, numero_exercicios);
                     break;
                 case 2:
-                    system("cls");
+                     /*system("cls");*/
                     mostrar_dados_submissoes(vetor_submissoes,numero_submissoes);
                     break;
                 case 0:
                     sair = confirmar_Sim_ou_Nao("Deseja voltar ao menu principal ?(S\\N)\n","Abortado o Regresso ao Menu Principal\n","A voltar para o Menu Principal (Prima qualquer tecla para voltar)!");
                     break;
                 default:
-                    system("cls");
+                     /*system("cls");*/
                     printf("Erro, Opcao Nao Permitida!");
                     break;
                 }
             } while (sair != 1);
             sair = 0;
-            system("cls");
+             /*system("cls");*/
             break;
         case 5: //estastiticas
-            system("cls");
+             /*system("cls");*/
             do{
                 escolha = menu_opcoes_estatisticas();
                 switch (escolha)
                 {
                 case 1:
-                    system("cls");
+                     /*system("cls");*/
                     calcular_submissoes_por_estudante(vetor_submissoes,numero_submissoes, vetor_alunos,numero_alunos);
                     break;
                 case 2:
-                    system("cls");
+                     /*system("cls");*/
                     calcular_media_nota_por_estudante(vetor_submissoes,numero_submissoes, vetor_alunos,numero_alunos);
                     break;
                 case 3:
-                    system("cls");
+                     /*system("cls");*/
                     calcular_percentagem_exercicios_resolvidos_por_ficha_por_estudante(vetor_alunos, numero_alunos,vetor_fichas,numero_fichas, vetor_exercicios,numero_exercicios,vetor_submissoes,numero_submissoes);
                     break;
                 case 0:
                     sair = confirmar_Sim_ou_Nao("Deseja voltar ao menu principal ?(S\\N)\n","Abortado o Regresso ao Menu Principal\n","A voltar para o Menu Principal (Prima qualquer tecla para voltar)!");
                     break;
                 default:
-                    system("cls");
+                     /*system("cls");*/
                     printf("Erro, Opcao Nao Permitida!");
                     break;
                 }
             } while (sair != 1);
             sair = 0;
-            system("cls");
+             /*system("cls");*/
             break;
         case 6: //gavar dados ficheiro
-            system("cls");
+             /*system("cls");*/
             gravar_ficheiro_binario(vetor_alunos, vetor_fichas,vetor_exercicios, vetor_submissoes, numero_alunos, numero_fichas, numero_exercicios, numero_submissoes);
             break;
         case 7: //ler dados ficheiro
-            system("cls");
+             /*system("cls");*/
             numero_alunos = ler_ficheiro_binario_estudantes(vetor_alunos);
             numero_fichas = ler_ficheiro_binario_fichas(vetor_fichas);
             numero_exercicios = ler_ficheiro_binario_exercicios(vetor_exercicios);
             numero_submissoes =ler_ficheiro_binario_submissoes(vetor_submissoes);
             break;
         case 0: //sair
-            system("cls");
+             /*system("cls");*/
             sair = confirmar_Sim_ou_Nao("Deseja sair do programa ?(S\\N)\n","Entendido, a voltar ao programa\n","Entendido a sair do programa, prima qualquer tecla para terminar!");
             break;
         default:
-            system("cls");
+             /*system("cls");*/
             printf("Erro, Opcao Nao Permitida!");
             break;
         }
@@ -424,7 +416,7 @@ int menu_opcoes(void){
         scanf("%d",&opcao);
         fflush(stdin);
         if (opcao < 0 || opcao > 7){
-            system("cls");
+             /*system("cls");*/
             printf("\nO valor inserido nao se encontr na lista de opcoes,\nporfavor insira uma das opcoes indicadas\n");
         }
     } while (opcao < 0 || opcao > 7);
@@ -446,7 +438,7 @@ int menu_opcoes_estudantes(void){
         scanf("%d",&opcao);
         fflush(stdin);
         if (opcao < 0 || opcao > 2){
-            system("cls");
+             /*system("cls");*/
             printf("\nO valor inserido nao se encontr na lista de opcoes,\nporfavor insira uma das opcoes indicadas\n");
         }
     } while (opcao < 0 || opcao > 2);
@@ -468,7 +460,7 @@ int menu_opcoes_exercicios(void){
         scanf("%d",&opcao);
         fflush(stdin);
         if (opcao < 0 || opcao > 2){
-            system("cls");
+             /*system("cls");*/
             printf("\nO valor inserido nao se encontr na lista de opcoes,\nporfavor insira uma das opcoes indicadas\n");
         }
     } while (opcao < 0 || opcao > 2);
@@ -490,7 +482,7 @@ int menu_opcoes_fichas(void){
         scanf("%d",&opcao);
         fflush(stdin);
         if (opcao < 0 || opcao > 2){
-            system("cls");
+             /*system("cls");*/
             printf("\nO valor inserido nao se encontr na lista de opcoes,\nporfavor insira uma das opcoes indicadas\n");
         }
     } while (opcao < 0 || opcao > 2);
@@ -512,7 +504,7 @@ int menu_opcoes_submicoes(void){
         scanf("%d",&opcao);
         fflush(stdin);
         if (opcao < 0 || opcao > 2){
-            system("cls");
+             /*system("cls");*/
             printf("\nO valor inserido nao se encontr na lista de opcoes,\nporfavor insira uma das opcoes indicadas\n");
         }
     } while (opcao < 0 || opcao > 2);
@@ -535,7 +527,7 @@ int menu_opcoes_estatisticas(void){
         scanf("%d",&opcao);
         fflush(stdin);
         if (opcao < 0 || opcao > 3){
-            system("cls");
+             /*system("cls");*/
             printf("\nO valor inserido nao se encontr na lista de opcoes,\nporfavor insira uma das opcoes indicadas\n");
         }
     } while (opcao < 0 || opcao > 3);
@@ -565,7 +557,7 @@ t_data ler_data(t_data data){
 void ler_entre_2_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[]) {
     int opcao = 0;
     do{
-        system("cls");
+         /*system("cls");*/
         printf("\n(1) - %s\n(2) - %s\n%s: ",opcao1,opcao2,mensagem);
         scanf("%d",&opcao);
         fflush(stdin);
@@ -620,7 +612,7 @@ int ler_numero_inteiro(char texto[],int min, int max){
         scanf("%d",&num);
         fflush(stdin);
         if (num < min || num > max){
-            system("cls"); 
+             /*system("cls");*/ 
             printf("O valor introduzido nao segue as regras indicadas\n(prima qualquer tecla para continuar)\n");
             getch();
         }
@@ -679,7 +671,7 @@ int ler_dados_estudante(t_estudante vetor_estudantes[],int numero_alunos) {
                 contador = contador - 1;
             }
         } else {
-            system("cls");
+             /*system("cls");*/
             printf("\nO aluno com o numero indicado ja se encontra registado escolha outro numero\n"); //mensagem de erro
         } 
     } while (flag_estudante_procurado != -1);
@@ -693,12 +685,12 @@ int ler_dados_ficha(t_ficha vetor_fichas[],int numero_fichas) {
     vetor_fichas[numero_fichas].id = contador; //id
     do { //nome da ficha
         numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha (este deve estar compreendido entre 1 e 10)",1,MAXIMO_FICHAS); //pede e devolve o numero da ficha
-        flag_ficha_procurado = procurar_ficha(vetor_fichas,numero_fichas, numero_ficha_procurar-1); //manda para a função
-        if (flag_ficha_procurado == -1) {
+        flag_ficha_procurado = procurar_ficha(vetor_fichas,numero_fichas, numero_ficha_procurar); //manda para a função
+        if (flag_ficha_procurado == -1) { 
             sprintf(nome_ficha, "Ficha %d", numero_ficha_procurar); 
             strcpy(vetor_fichas[numero_fichas].nome, nome_ficha); 
         } else {
-            system("cls");
+             /*system("cls");*/
             printf("\nA Ficha com o numero indicada ja se encontra registada escolha outro numero para a sua ficha\n"); //mensagem de erro
         }
     } while (flag_ficha_procurado != -1);
@@ -711,7 +703,7 @@ int ler_dados_ficha(t_ficha vetor_fichas[],int numero_fichas) {
 int ler_dados_exercicios(t_exercicio vetor_exercicios[], int numero_exercicios, t_ficha vetor_fichas[], int numero_fichas) {
     int numero_da_ficha = 0, indice_ficha = 0,flag_limite = 0, total_exercicios_ficha = 0;
     numero_da_ficha = ler_numero_inteiro("Insira o numero da ficha a que este exercicio vai estar ligado (entre 1 e 10)", 1, MAXIMO_FICHAS);
-    indice_ficha = procurar_ficha(vetor_fichas, numero_fichas, numero_da_ficha);
+    indice_ficha = procurar_ficha(vetor_fichas, numero_fichas, numero_da_ficha - 1);
     if (indice_ficha != -1) { //A ficha existe
         for (int index = 0; index <= numero_exercicios; index++) {
             if (vetor_exercicios[index].id_ficha == indice_ficha+1) {
@@ -745,7 +737,7 @@ int ler_submissao(t_submissao vetor_submissoes[], int numero_submissoes, t_estud
             flag_procurar_estudante = procurar_estudante(vetor_estudantes, numero_alunos, id_estudante);
             if (flag_procurar_estudante != -1) {
                 id_ficha = ler_numero_inteiro("Indique o numero da ficha a atribuir a esta submissao", 1, MAXIMO_FICHAS);
-                flag_procurar_ficha = procurar_ficha(vetor_fichas, numero_fichas, id_ficha);
+                flag_procurar_ficha = procurar_ficha(vetor_fichas, numero_fichas, id_ficha - 1);
                 if (flag_procurar_ficha != -1) {
                     id_exercicio = ler_numero_inteiro("indique o numero do exercicio a atribuir a esta submissao",1,MAXIMO_EXE);
                     flag_procurar_exercicio = procurar_exercicio(vetor_exercicios, numero_exercicios, id_exercicio, vetor_fichas, numero_fichas, id_ficha);
@@ -776,6 +768,7 @@ void guardar_dados_submissao(t_submissao vetor_submissoes[], int numero_submisso
     vetor_submissoes[numero_submissoes].n_linhas_solucao= ler_numero_inteiro("Insira o numero de linhas da solucao do exercicio", 1,MAXIMO_SUBMISSOES);
     vetor_submissoes[numero_submissoes].data_submicao = data_entrega_submicao;
 }
+
 //  procura de dados
 //         |
 //        \/
@@ -794,7 +787,7 @@ int procurar_estudante(t_estudante vetor_estudantes[], int numero_alunos,int num
 int procurar_ficha(t_ficha vetor_fichas[], int numero_fichas,int numero_fichas_procurar) {
     int indice = 0, indice_ficha = -1;
     for (indice = 0; indice <= numero_fichas; indice++){
-        if (vetor_fichas[indice].id == numero_fichas_procurar) { // Mesmo metodo utilizado anteriormente no codigo
+        if (vetor_fichas[indice].id == numero_fichas_procurar + 1) { // Mesmo metodo utilizado anteriormente no codigo
             indice_ficha = indice;  
         }
     }
@@ -897,7 +890,7 @@ void mostrar_dados_ficha(t_ficha vetor_ficha[],int numero_ficha){
         ler_entre_2_opcoes(escolha, "Escolha se quer apresentar todas as fichas ou uma em especifico","Todas","Especifica");
         if (strcmp(escolha,"Especifica")  == 0) {
             numero_ficha_procurar = ler_numero_inteiro("\nInsira o numero da ficha a procurar (este deve estar compreendido entre 1 e 10)",1,MAXIMO_EXE);
-            indice = procurar_ficha(vetor_ficha, numero_ficha, numero_ficha_procurar);
+            indice = procurar_ficha(vetor_ficha, numero_ficha, numero_ficha_procurar-1);
             if (indice != -1) {
                 print_detalhes_ficha(vetor_ficha,indice);
             } else {
@@ -962,7 +955,7 @@ void mostrar_dados_submissoes(t_submissao vetor_submissoes[],int numero_submisso
     if (vetor_submissoes[0].id == 0) {
         printf("Nao existem dados a apresentar, carregue os dados do ficheiro ou insira dados novos!!!\nPrima qualquer tecla para continuar...");
         getch();
-        system("cls");
+         /*system("cls");*/
     } else {
         ler_entre_2_opcoes(escolha, "Escolha se quer apresentar todas as submissões ou uma em especifico","Todas","Especifica");
         if (strcmp(escolha,"Especifica")  == 0) {
@@ -974,7 +967,6 @@ void mostrar_dados_submissoes(t_submissao vetor_submissoes[],int numero_submisso
                 printf("O numero inserido nao foi encontrado nos registos, carregue os dados dos ficheiros ou insira uma ou mais fichas!");
             }
         } else {
-            printf(RED"\nBRUH\n"RESET);
             for (indice = 0; indice < numero_submissoes; indice++){
                 print_detalhes_submissao(vetor_submissoes, indice);
             } 
@@ -1115,11 +1107,12 @@ void calcular_media_nota_por_estudante(t_submissao vetor_submissoes[],int numero
     }
 }
 void calcular_percentagem_exercicios_resolvidos_por_ficha_por_estudante(t_estudante vetor_estudantes[], int numero_alunos,t_ficha vetor_fichas[],int numero_fichas, t_exercicio vetor_exercicios[],int numero_exercicios,t_submissao vetor_submissoes[],int numero_submissoes){
-    int numero_aluno_procurar = 0, min_aluno = 2230001,max_aluno = 2249999, numero_ficha_procurar = 0, total_exercicios = 0, percentagem = 0, index_1 = 0,index_2 = 0, total_submissoes_ficha = 0, flag_erro = 0;
+    int numero_aluno_procurar = 0, min_aluno = 2230001,max_aluno = 2249999, numero_ficha_procurar = 0, total_exercicios = 0, percentagem = 0, index_1 = 0,index_2 = 0, total_submissoes_ficha = 0, flag_erro = 0,total_exercicios_ficha =0;
     numero_aluno_procurar = ler_numero_inteiro("Insira o numero do estudante a procurar (deve estar compreendido entre 2230001 e 2249999)",min_aluno,max_aluno);
     numero_ficha_procurar = ler_numero_inteiro("Insira o numero da ficha a procurar (este deve estar compreendido entre 1 e 10)",1,MAXIMO_FICHAS);
     for (index_1 = 0; index_1 < numero_submissoes; index_1++) { //percorrer o vetor de fichas
         if (vetor_submissoes[index_1].id_estudante == numero_aluno_procurar) {//dentro do submissoes do aluno
+            total_exercicios_ficha++;
             if (vetor_submissoes[index_1].id_ficha == numero_ficha_procurar) {//encontramos a ficha dada pelo utilizador
                 total_submissoes_ficha++;
                 for (index_2 = 0; index_2 < numero_exercicios; index_2++) { //percorrer o vetor de exercicios
@@ -1131,7 +1124,8 @@ void calcular_percentagem_exercicios_resolvidos_por_ficha_por_estudante(t_estuda
                 printf("\nO aluno nao tem submissoes desta ficha!\n");
                 flag_erro = 1;
             }
-        } else {
+        }
+        if (total_exercicios_ficha == 0) {
             printf("\nO aluno nao tem submissoes!\n");
             flag_erro = 1;
         }
