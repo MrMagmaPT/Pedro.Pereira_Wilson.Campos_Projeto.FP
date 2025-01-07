@@ -557,7 +557,6 @@ t_data ler_data(t_data data){
 void ler_entre_2_opcoes(char vetor[],char mensagem[],char opcao1[],char opcao2[]) {
     int opcao = 0;
     do{
-          system("cls");
         printf("\n(1) - %s\n(2) - %s\n%s: ",opcao1,opcao2,mensagem);
         scanf("%d",&opcao);
         fflush(stdin);
